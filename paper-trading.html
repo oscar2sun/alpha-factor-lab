@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI因子精选 · 模拟盘</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0f1117;
+  --card: #181b23;
+  --border: #2a2d38;
+  --text: #e2e4ea;
+  --text2: #8b8fa3;
+  --accent: #4f8cff;
+  --green: #22c55e;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --purple: #a855f7;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; line-height:1.6; }
+.container { max-width:1200px; margin:0 auto; padding:24px 16px; }
+a { color:var(--accent); text-decoration:none; }
+a:hover { text-decoration:underline; }
+
+/* Header */
+.header { text-align:center; padding:32px 0 24px; }
+.header h1 { font-size:2rem; font-weight:700; margin-bottom:4px; }
+.header h1 .icon { font-size:1.6rem; margin-right:8px; }
+.header .subtitle { color:var(--text2); font-size:0.95rem; }
+.nav-links { margin-top:12px; }
+.nav-links a { margin:0 12px; padding:6px 16px; border:1px solid var(--border); border-radius:8px; font-size:0.85rem; transition:all .2s; }
+.nav-links a:hover { border-color:var(--accent); background:rgba(79,140,255,.1); text-decoration:none; }
+
+/* KPI Cards */
+.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:24px 0; }
+.kpi { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; }
+.kpi .label { font-size:0.78rem; color:var(--text2); margin-bottom:4px; }
+.kpi .value { font-size:1.5rem; font-weight:700; }
+.kpi .value.green { color:var(--green); }
+.kpi .value.red { color:var(--red); }
+.kpi .value.accent { color:var(--accent); }
+.kpi .value.yellow { color:var(--yellow); }
+
+/* Section */
+.section { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:20px; }
+.section h2 { font-size:1.15rem; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.section h2 .dot { width:4px; height:18px; border-radius:2px; background:var(--accent); }
+
+/* Table */
+table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+th { color:var(--text2); font-weight:500; text-align:left; padding:10px 8px; border-bottom:1px solid var(--border); }
+td { padding:10px 8px; border-bottom:1px solid var(--border); }
+tr:last-child td { border-bottom:none; }
+.tag-buy { background:rgba(34,197,94,.15); color:var(--green); padding:2px 10px; border-radius:4px; font-size:0.8rem; }
+.tag-sell { background:rgba(239,68,68,.15); color:var(--red); padding:2px 10px; border-radius:4px; font-size:0.8rem; }
+
+/* Chart container */
+.chart-box { position:relative; height:360px; }
+.chart-half { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media(max-width:768px) { .chart-half { grid-template-columns:1fr; } }
+
+/* Rebalance cards */
+.reb-card { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:10px; }
+.reb-card .date { color:var(--accent); font-weight:600; font-size:0.9rem; }
+.reb-card .meta { color:var(--text2); font-size:0.82rem; margin-top:4px; }
+
+/* Empty state */
+.empty { text-align:center; padding:48px 20px; color:var(--text2); }
+.empty .icon { font-size:3rem; margin-bottom:12px; }
+
+/* Pagination */
+.pagination { display:flex; justify-content:center; gap:8px; margin-top:14px; }
+.pagination button { background:var(--bg); border:1px solid var(--border); color:var(--text); padding:6px 14px; border-radius:6px; cursor:pointer; font-size:0.82rem; }
+.pagination button:hover { border-color:var(--accent); }
+.pagination button.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+
+/* Footer */
+.footer { text-align:center; padding:32px 0; color:var(--text2); font-size:0.8rem; line-height:1.8; }
+.footer .warn { color:var(--yellow); font-weight:500; margin-bottom:8px; display:block; }
+
+/* Responsive */
+@media(max-width:600px) {
+  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+  .header h1 { font-size:1.4rem; }
+  .chart-box { height:260px; }
+  table { font-size:0.78rem; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- Header -->
+<div class="header">
+  <h1><span class="icon">📈</span>AI因子精选 · 模拟盘</h1>
+  <div class="subtitle">
+    起始日期: 2026-02-17 &nbsp;|&nbsp;
+    初始资金: ¥1,000,000 &nbsp;|&nbsp;
+    基准: 沪深300
+  </div>
+  <div class="nav-links">
+    <a href="index.html">📊 因子研究库</a>
+    <a href="paper-trading.html" style="border-color:var(--accent);background:rgba(79,140,255,.1);">📈 模拟盘</a>
+  </div>
+</div>
+
+<!-- KPI -->
+<div class="kpi-grid" id="kpiArea"></div>
+
+<!-- NAV Chart -->
+<div class="section">
+  <h2><span class="dot"></span>净值曲线</h2>
+  <div class="chart-box" id="navChartWrap"></div>
+</div>
+
+<!-- Holdings -->
+<div class="section">
+  <h2><span class="dot"></span>当前持仓</h2>
+  <div class="chart-half">
+    <div id="holdingsTable"></div>
+    <div style="position:relative;height:300px;" id="pieWrap"></div>
+  </div>
+</div>
+
+<!-- Trades -->
+<div class="section">
+  <h2><span class="dot"></span>交易记录</h2>
+  <div id="tradesArea"></div>
+</div>
+
+<!-- Rebalance -->
+<div class="section">
+  <h2><span class="dot"></span>调仓历史</h2>
+  <div id="rebArea"></div>
+</div>
+
+<!-- Fee Analysis -->
+<div class="section">
+  <h2><span class="dot"></span>费用分析</h2>
+  <div class="chart-half">
+    <div style="position:relative;height:300px;" id="feeBarWrap"></div>
+    <div style="position:relative;height:300px;" id="feePieWrap"></div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <span class="warn">⚠️ 风险提示：本页面为模拟盘，不反映真实交易，仅供研究参考</span>
+  费率设置: 佣金万三(双向) | 印花税万五(仅卖出) | 过户费十万分之一 | 模拟滑点千一<br>
+  最低佣金: ¥5 | 调仓频率: monthly<br><br>
+  最后更新: 2026-02-17 03:31:55<br>
+  Powered by <a href="https://oscar2sun.github.io/alpha-factor-lab/">Alpha Factor Lab</a>
+</div>
+
+</div>
+
+<script>
+// ===== Embedded Data =====
+const CONFIG = {"name": "AI因子精选", "initial_cash": 1000000, "start_date": "2026-02-17", "benchmark": "000300", "commission_rate": 0.0003, "stamp_duty_rate": 0.0005, "slippage_rate": 0.001, "min_commission": 5, "transfer_fee_rate": 1e-05, "rebalance_freq": "monthly", "notes": "基于量化因子筛选的A股模拟组合"};
+const PORTFOLIO = {"cash": 1000000, "positions": {}, "last_update": "2026-02-17", "net_value": 1.0};
+const TRADES = {"trades": []};
+const NAV_HISTORY = {"dates": [], "nav": [], "benchmark_nav": [], "cash_pct": [], "position_count": []};
+const REBALANCE_HISTORY = {"rebalances": []};
+const SUMMARY = {"status": "empty", "message": "暂无数据"};
+
+// ===== Helpers =====
+function fmt(n, d=2) { return n == null ? '—' : Number(n).toFixed(d); }
+function fmtMoney(n) { return n == null ? '—' : '¥' + Number(n).toLocaleString('zh-CN', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function pctClass(v) { return v > 0 ? 'green' : v < 0 ? 'red' : 'accent'; }
+
+// ===== KPI =====
+(function() {
+  const area = document.getElementById('kpiArea');
+  const isEmpty = SUMMARY.status === 'empty';
+  const kpis = [
+    { label:'累计收益', value: isEmpty ? '—' : fmt(SUMMARY.total_return_pct)+'%', cls: isEmpty ? 'accent' : pctClass(SUMMARY.total_return_pct) },
+    { label:'年化收益', value: isEmpty ? '—' : fmt(SUMMARY.annualized_return_pct)+'%', cls: isEmpty ? 'accent' : pctClass(SUMMARY.annualized_return_pct) },
+    { label:'最大回撤', value: isEmpty ? '—' : fmt(SUMMARY.max_drawdown_pct)+'%', cls: 'red' },
+    { label:'夏普比率', value: isEmpty ? '—' : fmt(SUMMARY.sharpe_ratio), cls: 'accent' },
+    { label:'总交易笔数', value: isEmpty ? '0' : SUMMARY.total_trades, cls: 'accent' },
+    { label:'累计费用', value: isEmpty ? '¥0' : fmtMoney(SUMMARY.total_fees), cls: 'yellow' },
+    { label:'当前持仓', value: isEmpty ? '0 只' : SUMMARY.current_positions + ' 只', cls: 'accent' },
+    { label:'可用资金', value: fmtMoney(PORTFOLIO.cash), cls: 'accent' },
+  ];
+  area.innerHTML = kpis.map(k => `
+    <div class="kpi"><div class="label">${k.label}</div><div class="value ${k.cls}">${k.value}</div></div>
+  `).join('');
+})();
+
+// ===== NAV Chart =====
+(function() {
+  const wrap = document.getElementById('navChartWrap');
+  if (!NAV_HISTORY.dates || NAV_HISTORY.dates.length === 0) {
+    wrap.innerHTML = '<div class="empty"><div class="icon">📉</div>暂无净值数据<br><small>首次调仓后将自动记录</small></div>';
+    return;
+  }
+  wrap.innerHTML = '<canvas id="navChart"></canvas>';
+  const datasets = [
+    { label:'组合净值', data:NAV_HISTORY.nav, borderColor:'#4f8cff', backgroundColor:'rgba(79,140,255,.08)', fill:true, tension:.3, pointRadius:0, borderWidth:2 },
+  ];
+  if (NAV_HISTORY.benchmark_nav && NAV_HISTORY.benchmark_nav.some(v => v !== null)) {
+    datasets.push({ label:'沪深300', data:NAV_HISTORY.benchmark_nav, borderColor:'#8b8fa3', borderDash:[5,3], tension:.3, pointRadius:0, borderWidth:1.5, fill:false });
+  }
+  new Chart(document.getElementById('navChart'), {
+    type:'line',
+    data:{ labels:NAV_HISTORY.dates, datasets },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      interaction:{ mode:'index', intersect:false },
+      plugins:{ legend:{ labels:{ color:'#8b8fa3', font:{size:12} } }, tooltip:{ callbacks:{ label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(4) } } },
+      scales:{
+        x:{ ticks:{ color:'#8b8fa3', maxTicksLimit:10 }, grid:{ color:'rgba(255,255,255,.05)' } },
+        y:{ ticks:{ color:'#8b8fa3' }, grid:{ color:'rgba(255,255,255,.05)' } }
+      }
+    }
+  });
+})();
+
+// ===== Holdings =====
+(function() {
+  const tableDiv = document.getElementById('holdingsTable');
+  const pieWrap = document.getElementById('pieWrap');
+  const pos = PORTFOLIO.positions;
+  const codes = Object.keys(pos);
+
+  if (codes.length === 0) {
+    tableDiv.innerHTML = '<div class="empty"><div class="icon">📋</div>暂无持仓<br><small>组合建仓后将显示持仓明细</small></div>';
+    pieWrap.innerHTML = '<div class="empty"><div class="icon">🍩</div>暂无仓位数据</div>';
+    return;
+  }
+
+  // Table
+  let rows = codes.map(c => {
+    const p = pos[c];
+    const mv = (p.avg_cost * p.volume);
+    return `<tr><td>${p.code}</td><td>${p.name}</td><td>${p.volume}</td><td>${fmt(p.avg_cost,2)}</td><td>${fmtMoney(mv)}</td></tr>`;
+  }).join('');
+  tableDiv.innerHTML = `<table><thead><tr><th>代码</th><th>名称</th><th>持股</th><th>成本价</th><th>市值</th></tr></thead><tbody>${rows}</tbody></table>`;
+
+  // Pie
+  const labels = codes.map(c => pos[c].name);
+  const values = codes.map(c => pos[c].avg_cost * pos[c].volume);
+  labels.push('现金');
+  values.push(PORTFOLIO.cash);
+  const colors = ['#4f8cff','#22c55e','#ef4444','#f59e0b','#a855f7','#06b6d4','#ec4899','#8b5cf6','#14b8a6','#f97316','#6366f1','#64748b'];
+  pieWrap.innerHTML = '<canvas id="pieChart"></canvas>';
+  new Chart(document.getElementById('pieChart'), {
+    type:'doughnut',
+    data:{ labels, datasets:[{ data:values, backgroundColor:colors.slice(0,values.length), borderWidth:0 }] },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'right', labels:{ color:'#8b8fa3', font:{size:11}, padding:8 } },
+        tooltip:{ callbacks:{ label: ctx => ctx.label + ': ' + fmtMoney(ctx.parsed) } }
+      }
+    }
+  });
+})();
+
+// ===== Trades =====
+(function() {
+  const area = document.getElementById('tradesArea');
+  const trades = (TRADES.trades || []).slice().reverse();
+  if (trades.length === 0) {
+    area.innerHTML = '<div class="empty"><div class="icon">📝</div>暂无交易记录<br><small>执行买卖操作后将自动记录</small></div>';
+    return;
+  }
+  const perPage = 10;
+  let page = 0;
+  function render() {
+    const start = page * perPage;
+    const slice = trades.slice(start, start + perPage);
+    const totalPages = Math.ceil(trades.length / perPage);
+    let rows = slice.map(t => {
+      const dir = t.direction === 'buy' ? '<span class="tag-buy">买入</span>' : '<span class="tag-sell">卖出</span>';
+      const fee = (t.commission||0) + (t.stamp_duty||0) + (t.transfer_fee||0) + (t.slippage_cost||0);
+      return `<tr><td>${t.date}</td><td>${t.code}</td><td>${t.name}</td><td>${dir}</td><td>${fmt(t.price)}</td><td>${t.volume}</td><td>${fmtMoney(t.amount)}</td><td>${fmtMoney(fee)}</td></tr>`;
+    }).join('');
+
+    let paginationHtml = '';
+    if (totalPages > 1) {
+      paginationHtml = '<div class="pagination">';
+      for (let i = 0; i < totalPages; i++) {
+        paginationHtml += `<button class="${i===page?'active':''}" data-p="${i}">${i+1}</button>`;
+      }
+      paginationHtml += '</div>';
+    }
+
+    area.innerHTML = `<div style="overflow-x:auto;"><table><thead><tr><th>日期</th><th>代码</th><th>名称</th><th>方向</th><th>价格</th><th>数量</th><th>金额</th><th>费用</th></tr></thead><tbody>${rows}</tbody></table></div>${paginationHtml}`;
+
+    area.querySelectorAll('.pagination button').forEach(btn => {
+      btn.addEventListener('click', () => { page = parseInt(btn.dataset.p); render(); });
+    });
+  }
+  render();
+})();
+
+// ===== Rebalance =====
+(function() {
+  const area = document.getElementById('rebArea');
+  const rebs = (REBALANCE_HISTORY.rebalances || []).slice().reverse();
+  if (rebs.length === 0) {
+    area.innerHTML = '<div class="empty"><div class="icon">🔄</div>暂无调仓记录<br><small>执行调仓操作后将在此展示</small></div>';
+    return;
+  }
+  area.innerHTML = rebs.map(r => `
+    <div class="reb-card">
+      <div class="date">${r.date} — ${r.note || '调仓'}</div>
+      <div class="meta">
+        总资产: ${fmtMoney(r.total_value_before)} &nbsp;|&nbsp;
+        卖出 ${r.sells} 只 &nbsp;|&nbsp; 买入 ${r.buys} 只 &nbsp;|&nbsp;
+        费用: ${fmtMoney(r.total_fees)}
+      </div>
+    </div>
+  `).join('');
+})();
+
+// ===== Fee Analysis =====
+(function() {
+  const barWrap = document.getElementById('feeBarWrap');
+  const pieWrap = document.getElementById('feePieWrap');
+  const s = SUMMARY;
+
+  if (s.status === 'empty' || (s.total_fees || 0) === 0) {
+    barWrap.innerHTML = '<div class="empty"><div class="icon">💰</div>暂无费用数据</div>';
+    pieWrap.innerHTML = '<div class="empty"><div class="icon">📊</div>暂无费用分析</div>';
+    return;
+  }
+
+  // Bar
+  barWrap.innerHTML = '<canvas id="feeBar"></canvas>';
+  new Chart(document.getElementById('feeBar'), {
+    type:'bar',
+    data:{
+      labels:['佣金','印花税','过户费','滑点'],
+      datasets:[{ data:[s.total_commission, s.total_stamp_duty, s.total_transfer_fee, s.total_slippage],
+        backgroundColor:['#4f8cff','#ef4444','#f59e0b','#a855f7'], borderRadius:6 }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: ctx => fmtMoney(ctx.parsed.y) } } },
+      scales:{
+        x:{ ticks:{ color:'#8b8fa3' }, grid:{ display:false } },
+        y:{ ticks:{ color:'#8b8fa3', callback: v => '¥'+v }, grid:{ color:'rgba(255,255,255,.05)' } }
+      }
+    }
+  });
+
+  // Pie
+  pieWrap.innerHTML = '<canvas id="feePie"></canvas>';
+  new Chart(document.getElementById('feePie'), {
+    type:'doughnut',
+    data:{
+      labels:['佣金','印花税','过户费','滑点'],
+      datasets:[{ data:[s.total_commission, s.total_stamp_duty, s.total_transfer_fee, s.total_slippage],
+        backgroundColor:['#4f8cff','#ef4444','#f59e0b','#a855f7'], borderWidth:0 }]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'right', labels:{ color:'#8b8fa3', font:{size:11} } },
+        tooltip:{ callbacks:{ label: ctx => ctx.label + ': ' + fmtMoney(ctx.parsed) + ' (' + fmt(ctx.parsed/(s.total_fees)*100,1) + '%)' } }
+      }
+    }
+  });
+})();
+</script>
+</body>
+</html>
