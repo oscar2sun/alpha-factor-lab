@@ -111,6 +111,75 @@
     "ic_data": "output/ai_3y/ic_series.json"
   },
   {
+    "id": "opm_change",
+    "name": "营业利润率变化",
+    "name_en": "OPM Change",
+    "category": "基本面-盈利",
+    "description": "营业利润率同比变化，衡量企业盈利能力的边际改善或恶化。",
+    "formula": "OPM(t) - OPM(t-1)",
+    "formula_detail": "营业利润率变化 = 本期营业利润率 - 去年同期营业利润率\n营业利润率 = 营业利润 / 营业收入 × 100%",
+    "hypothesis": "营业利润率改善的公司，盈利质量提升，预期收益更高",
+    "expected_direction": "正向（利润率改善越大，预期收益越高）",
+    "stock_pool": "沪深300（71只股票）",
+    "period": "2024-01-10 ~ 2026-02-13",
+    "data_frequency": "日频",
+    "rebalance_freq": 20,
+    "factor_type": "静态（年报数据）",
+    "n_stocks": 71,
+    "n_groups": 5,
+    "cost": 0.002,
+    "metrics": {
+      "ic_mean": 0.0249,
+      "rank_ic": 0.0399,
+      "ir": 0.151,
+      "ic_t_stat": 0.73,
+      "ic_significant": false,
+      "ic_positive_pct": 0.583,
+      "monotonicity": -0.3,
+      "long_short_total_return": -11.29,
+      "long_short_annual_return": -1.0,
+      "long_short_sharpe": -0.15,
+      "long_short_mdd": -9.6,
+      "turnover_mean": 0,
+      "group_returns_annualized": [
+        0.129,
+        0.389,
+        0.325,
+        0.334,
+        -1.0
+      ],
+      "group_sharpe": [
+        0.5,
+        1.54,
+        1.5,
+        1.7,
+        -0.15
+      ],
+      "group_mdd": [
+        -0.272,
+        -0.179,
+        -0.183,
+        -0.183,
+        -10.77
+      ]
+    },
+    "rating": "⚠️ G5异常",
+    "rating_detail": "IC=0.025, G2-G4表现优秀(Sharpe>1.5), 但G5组存在严重数据异常",
+    "conclusion": "因子在G1-G4有良好分层，G2-G4年化30%+且Sharpe>1.5，但G5组（利润率恶化最大）出现数值异常，可能是极端值导致。需进一步winsorize处理。",
+    "created_at": "2026-02-17",
+    "has_nav_chart": true,
+    "has_ic_chart": true,
+    "has_summary_chart": true,
+    "charts": {
+      "nav": "output/opm_change/quintile_returns.png",
+      "ic": "output/opm_change/ic_series.png",
+      "summary": "output/opm_change/backtest_summary.png",
+      "distribution": "output/opm_change/factor_distribution.png"
+    },
+    "nav_data": "output/opm_change/cumulative_returns.json",
+    "ic_data": "output/opm_change/ic_series.json"
+  },
+  {
     "id": "earnings_accel",
     "name": "净利润加速度",
     "name_en": "Earnings Acceleration",
