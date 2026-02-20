@@ -443,9 +443,9 @@
     "rating_detail": "IC=0.010, 不显著, 单调性=0, 分组无梯度",
     "conclusion": "在沪深300上5日反转效应基本不存在。大盘蓝筹机构定价效率高，散户追涨杀跌行为不足以造成系统性反转。建议在中小盘（中证1000）上重新测试。",
     "created_at": "2026-02-20",
-    "has_nav_chart": false,
-    "has_ic_chart": false,
-    "has_summary_chart": false,
+    "has_nav_chart": true,
+    "has_ic_chart": true,
+    "has_summary_chart": true,
     "nav_data": "output/short_term_reversal/cumulative_returns.json",
     "ic_data": "output/short_term_reversal/ic_series.json"
   },
@@ -506,9 +506,9 @@
     "rating_detail": "IC=-0.005, 不显著, 单调性=0, 方向不对",
     "conclusion": "换手率变化在沪深300大盘股上没有预测力。大盘股的换手率波动主要由机构调仓驱动，而非散户情绪。建议在中小盘上验证。",
     "created_at": "2026-02-20",
-    "has_nav_chart": false,
-    "has_ic_chart": false,
-    "has_summary_chart": false,
+    "has_nav_chart": true,
+    "has_ic_chart": true,
+    "has_summary_chart": true,
     "nav_data": "output/turnover_surge/cumulative_returns.json",
     "ic_data": "output/turnover_surge/ic_series.json"
   },
@@ -569,9 +569,9 @@
     "rating_detail": "IC显著但方向反了！高振幅组反而表现好，与假设矛盾",
     "conclusion": "因子统计上显著(t=-2.46)，但方向与假设相反——在沪深300上，高振幅不是'过度投机'而是'市场关注度高'的信号。G4组年化15.3%最优。如果翻转方向作为'关注度因子'，有一定潜力。待中证1000验证。",
     "created_at": "2026-02-20",
-    "has_nav_chart": false,
-    "has_ic_chart": false,
-    "has_summary_chart": false,
+    "has_nav_chart": true,
+    "has_ic_chart": true,
+    "has_summary_chart": true,
     "nav_data": "output/amplitude_fatigue/cumulative_returns.json",
     "ic_data": "output/amplitude_fatigue/ic_series.json"
   }
