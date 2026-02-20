@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>基本面分析报告 — Alpha Factor Lab</title>
+<style>
+:root {
+  --bg: #0f1117; --card: #1a1d29; --border: #2a2d3a;
+  --text: #e4e6eb; --text2: #8b8fa3; --accent: #4f8cff;
+  --green: #22c55e; --red: #ef4444; --orange: #f59e0b; --purple: #a855f7;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.header {
+  text-align: center;
+  padding: 32px 0 24px;
+  border-bottom: 1px solid var(--border);
+}
+.header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 4px; }
+.header h1 .icon { font-size: 1.6rem; margin-right: 8px; }
+.header .subtitle { color: var(--text2); font-size: 0.95rem; }
+.nav-links { margin-top: 12px; }
+.nav-links a {
+  margin: 0 8px;
+  padding: 6px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  transition: all .2s;
+  display: inline-block;
+}
+.nav-links a:hover { border-color: var(--accent); background: rgba(79,140,255,.1); text-decoration: none; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text2);
+}
+.empty-state .icon { font-size: 4rem; margin-bottom: 20px; display: block; }
+.empty-state h2 { font-size: 1.3rem; color: var(--text); margin-bottom: 12px; }
+.empty-state p { max-width: 500px; margin: 0 auto; font-size: 0.95rem; line-height: 1.7; }
+
+/* Report List */
+.report-list { display: flex; flex-direction: column; gap: 16px; }
+
+.report-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.report-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.report-card.active { border-color: var(--accent); }
+
+.report-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.report-name { font-size: 1.15rem; font-weight: 600; }
+.report-code { color: var(--text2); font-size: 0.85rem; margin-left: 8px; }
+.report-date { color: var(--text2); font-size: 0.8rem; }
+
+.rating {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.rating-strong-buy { background: rgba(34,197,94,0.15); color: var(--green); }
+.rating-buy { background: rgba(34,197,94,0.1); color: #4ade80; }
+.rating-hold { background: rgba(245,158,11,0.15); color: var(--orange); }
+.rating-sell { background: rgba(239,68,68,0.15); color: var(--red); }
+.rating-na { background: rgba(139,143,163,0.15); color: var(--text2); }
+
+.score-bar {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.score-item {
+  background: rgba(79,140,255,0.08);
+  border: 1px solid rgba(79,140,255,0.15);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+}
+.score-item .label { color: var(--text2); }
+.score-item .val { font-weight: 600; margin-left: 6px; }
+.score-item .val.high { color: var(--green); }
+.score-item .val.mid { color: var(--orange); }
+.score-item .val.low { color: var(--red); }
+
+/* Detail */
+.detail-panel {
+  display: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 30px;
+  margin-top: 16px;
+  animation: fadeIn 0.3s;
+}
+.detail-panel.show { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.detail-section {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.detail-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.detail-section h3 {
+  font-size: 1rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.detail-section h3 .dot { width: 4px; height: 16px; border-radius: 2px; background: var(--accent); }
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+.metric {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 6px;
+}
+.metric .k { color: var(--text2); font-size: 0.88rem; }
+.metric .v { font-weight: 600; font-size: 0.88rem; }
+
+.summary-text {
+  color: var(--text2);
+  font-size: 0.92rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.footer {
+  text-align: center;
+  padding: 24px;
+  color: var(--text2);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span class="icon">🏰</span>基本面分析报告</h1>
+  <p class="subtitle">巴菲特视角 · 四维评估框架</p>
+  <div class="nav-links">
+    <a href="index.html">← 首页</a>
+    <a href="factor-backtest.html">因子回测</a>
+    <a href="paper-trading.html">模拟盘</a>
+  </div>
+</div>
+
+<div class="container">
+  <div id="report-list" class="report-list"></div>
+  <div id="detail-panel" class="detail-panel"></div>
+  <div id="empty-state" class="empty-state" style="display:none;">
+    <span class="icon">📭</span>
+    <h2>暂无分析报告</h2>
+    <p>通过 AI 助手运行「巴菲特视角分析」后，报告会自动展示在这里。<br>示例指令：「帮我分析一下贵州茅台」</p>
+  </div>
+</div>
+
+<div class="footer">
+  Alpha Factor Lab · <a href="index.html">返回首页</a>
+</div>
+
+<script>
+const DATA_FILE = 'fundamental-reports.json';
+
+function scoreClass(v) {
+  if (v >= 7) return 'high';
+  if (v >= 4) return 'mid';
+  return 'low';
+}
+
+function ratingClass(r) {
+  const map = { '强烈推荐': 'strong-buy', '推荐': 'buy', '中性': 'hold', '回避': 'sell' };
+  return 'rating-' + (map[r] || 'na');
+}
+
+function renderMetrics(obj) {
+  if (!obj || typeof obj !== 'object') return '';
+  return '<div class="metric-grid">' +
+    Object.entries(obj).map(([k,v]) =>
+      `<div class="metric"><span class="k">${k}</span><span class="v">${v}</span></div>`
+    ).join('') + '</div>';
+}
+
+function renderDetail(r) {
+  const panel = document.getElementById('detail-panel');
+  let html = '';
+
+  if (r.moat) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>🏰 护城河分析</h3>`;
+    if (r.moat.summary) html += `<p class="summary-text">${r.moat.summary}</p>`;
+    if (r.moat.metrics) html += renderMetrics(r.moat.metrics);
+    html += '</div>';
+  }
+  if (r.earnings) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>📊 盈利质量</h3>`;
+    if (r.earnings.summary) html += `<p class="summary-text">${r.earnings.summary}</p>`;
+    if (r.earnings.metrics) html += renderMetrics(r.earnings.metrics);
+    html += '</div>';
+  }
+  if (r.health) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>💰 财务健康</h3>`;
+    if (r.health.summary) html += `<p class="summary-text">${r.health.summary}</p>`;
+    if (r.health.metrics) html += renderMetrics(r.health.metrics);
+    html += '</div>';
+  }
+  if (r.valuation) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>📐 估值合理性</h3>`;
+    if (r.valuation.summary) html += `<p class="summary-text">${r.valuation.summary}</p>`;
+    if (r.valuation.metrics) html += renderMetrics(r.valuation.metrics);
+    html += '</div>';
+  }
+  if (r.conclusion) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>📝 综合结论</h3>`;
+    html += `<p class="summary-text">${r.conclusion}</p>`;
+    html += '</div>';
+  }
+  if (r.risks) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>⚠️ 风险提示</h3>`;
+    html += `<p class="summary-text">${Array.isArray(r.risks) ? r.risks.map(x=>'• '+x).join('\n') : r.risks}</p>`;
+    html += '</div>';
+  }
+
+  panel.innerHTML = html;
+  panel.classList.add('show');
+}
+
+async function init() {
+  const listEl = document.getElementById('report-list');
+  const emptyEl = document.getElementById('empty-state');
+  const panel = document.getElementById('detail-panel');
+
+  let reports = [];
+  try {
+    const resp = await fetch(DATA_FILE);
+    if (!resp.ok) throw new Error('no data');
+    reports = await resp.json();
+  } catch(e) {
+    emptyEl.style.display = 'block';
+    return;
+  }
+
+  if (!reports.length) {
+    emptyEl.style.display = 'block';
+    return;
+  }
+
+  reports.sort((a,b) => (b.date||'').localeCompare(a.date||''));
+
+  listEl.innerHTML = reports.map((r, i) => {
+    const moatScore = r.moat?.score ?? '-';
+    const earningsScore = r.earnings?.score ?? '-';
+    const healthScore = r.health?.score ?? '-';
+    const valScore = r.valuation?.score ?? '-';
+    return `
+    <div class="report-card" data-idx="${i}">
+      <div class="report-top">
+        <div>
+          <span class="report-name">${r.name||'未知'}</span>
+          <span class="report-code">${r.code||''}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="rating ${ratingClass(r.rating)}">${r.rating||'未评级'}</span>
+          <span class="report-date">${r.date||''}</span>
+        </div>
+      </div>
+      <div class="score-bar">
+        <div class="score-item"><span class="label">护城河</span><span class="val ${typeof moatScore==='number'?scoreClass(moatScore):''}">${moatScore}/10</span></div>
+        <div class="score-item"><span class="label">盈利质量</span><span class="val ${typeof earningsScore==='number'?scoreClass(earningsScore):''}">${earningsScore}/10</span></div>
+        <div class="score-item"><span class="label">财务健康</span><span class="val ${typeof healthScore==='number'?scoreClass(healthScore):''}">${healthScore}/10</span></div>
+        <div class="score-item"><span class="label">估值</span><span class="val ${typeof valScore==='number'?scoreClass(valScore):''}">${valScore}/10</span></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  let activeIdx = -1;
+  listEl.querySelectorAll('.report-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const idx = parseInt(card.dataset.idx);
+      listEl.querySelectorAll('.report-card').forEach(c => c.classList.remove('active'));
+      if (idx === activeIdx) {
+        activeIdx = -1;
+        panel.classList.remove('show');
+        return;
+      }
+      activeIdx = idx;
+      card.classList.add('active');
+      renderDetail(reports[idx]);
+    });
+  });
+}
+
+init();
+</script>
+</body>
+</html>
