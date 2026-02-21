@@ -9,6 +9,7 @@
 - 因子回测、单因子测试、因子检验
 - 因子衰减、因子 IC、因子分层
 - 量化研究、alpha factor
+- 美股因子、US factor
 
 ## 工作流程
 
@@ -30,6 +31,11 @@
 - **是否静态**（截面因子 vs 时变因子——影响 IC 计算和衰减分析）
 
 ### Step 3: 数据获取
+
+根据目标市场选择数据获取方式：
+
+#### A股路径（fintool MCP）
+
 通过 mcporter 调用 MCP 金融工具获取数据。PATH 需包含 `/home/node/.local/bin`。
 
 ```bash
@@ -52,6 +58,44 @@ mcporter call fintool-index.get_index_constituent index_code=000300
 4. 建议支持**断点续传**（记录已完成的股票），避免大批量任务被中断后重头开始
 
 参考实现：`scripts/fetch_kline_3y.py`
+
+#### 美股路径（yfinance / us-market skill）
+
+使用 us-market skill 或直接用 yfinance 获取美股数据：
+
+```bash
+# 获取历史K线（用 us-market skill）
+python3 skills/us-market/scripts/us_market_query.py --type history --symbol AAPL --period 5y --interval 1d
+
+# 获取财务数据
+python3 skills/us-market/scripts/us_market_query.py --type financials --symbol AAPL --statement income
+```
+
+**批量获取美股数据（推荐直接用 yfinance）：**
+
+```python
+import yfinance as yf
+
+# 批量下载多只股票K线
+tickers = ['AAPL', 'MSFT', 'GOOGL', 'AMZN', 'NVDA']
+data = yf.download(tickers, period='3y', interval='1d', group_by='ticker')
+
+# 获取单只股票财务数据
+t = yf.Ticker('AAPL')
+income = t.income_stmt        # 利润表
+balance = t.balance_sheet     # 资产负债表
+cashflow = t.cashflow         # 现金流量表
+```
+
+**美股指数成分股获取：**
+- S&P 500：从 Wikipedia 抓取 `https://en.wikipedia.org/wiki/List_of_S%26P_500_companies`
+- NASDAQ-100：`https://en.wikipedia.org/wiki/Nasdaq-100`
+- 也可用 FMP API：`https://financialmodelingprep.com/stable/sp500-constituent?apikey=KEY`
+
+**⚠️ yfinance 速率限制：** Yahoo Finance 有隐式限速，批量拉取时建议：
+- 每只股票间隔 0.5-1 秒
+- 一次 download 不超过 50 只
+- 被限速后等待 5-10 分钟自动恢复
 
 ### Step 4: 因子计算
 ```bash
@@ -193,10 +237,26 @@ python3 scripts/visualizer.py \
 - [ ] 考虑了交易成本吗？（`--cost`）
 - [ ] 存在存活偏差吗？（用历史成分股而非当前成分股）
 
+## Step 8: 写入阿尔法工坊前端
+
+每次因子回测完成后，**必须**将结果写入前端展示：
+
+1. 读取 `factors.json`
+2. 按现有因子数据结构追加/更新一条记录（按 `id` 匹配）
+3. 回测产出的 `cumulative_returns.json` 和 `ic_series.json` 放在 `output/{factor_id}/` 目录下
+4. 在因子记录中设置 `nav_data` 和 `ic_data` 路径指向这些文件
+5. 写入后 commit 并 push 到 GitHub
+
+**阿尔法工坊地址：** https://oscar2sun.github.io/alpha-factor-lab/factor-backtest.html
+
 ## 目录结构
 ```
 alpha-factor-lab/
 ├── SKILL.md                    # 本文件
+├── factors.json                # 因子数据（前端读取）
+├── fundamental-reports.json    # 基本面报告数据
+├── output/                     # 回测产出（净值曲线/IC序列等）
+├── logs/                       # 模型调用日志（按日期）
 ├── references/
 │   └── factor-guide.md         # 因子分类、公式规范、评价标准
 ├── scripts/
