@@ -236,23 +236,25 @@ def av_quote(symbol):
 def av_history(symbol, period='1y', interval='1d'):
     if not ALPHAVANTAGE_KEY:
         raise ValueError("No ALPHAVANTAGE_API_KEY")
-    # AV 只支持日线/周线/月线
+    # AV 免费版只支持非 ADJUSTED 接口
     if interval in ('1d', 'daily'):
-        func = 'TIME_SERIES_DAILY_ADJUSTED'
+        func = 'TIME_SERIES_DAILY'
         ts_key = 'Time Series (Daily)'
     elif interval in ('1wk', 'weekly'):
-        func = 'TIME_SERIES_WEEKLY_ADJUSTED'
-        ts_key = 'Weekly Adjusted Time Series'
+        func = 'TIME_SERIES_WEEKLY'
+        ts_key = 'Weekly Time Series'
     elif interval in ('1mo', 'monthly'):
-        func = 'TIME_SERIES_MONTHLY_ADJUSTED'
-        ts_key = 'Monthly Adjusted Time Series'
+        func = 'TIME_SERIES_MONTHLY'
+        ts_key = 'Monthly Time Series'
     else:
-        func = 'TIME_SERIES_DAILY_ADJUSTED'
+        func = 'TIME_SERIES_DAILY'
         ts_key = 'Time Series (Daily)'
-    url = f"https://www.alphavantage.co/query?function={func}&symbol={symbol}&outputsize=full&apikey={ALPHAVANTAGE_KEY}"
+    # compact 返回最近100条，full 太大容易超时
+    outputsize = 'full' if period in ('5y', 'max') else 'compact'
+    url = f"https://www.alphavantage.co/query?function={func}&symbol={symbol}&outputsize={outputsize}&apikey={ALPHAVANTAGE_KEY}"
     data = http_get_json(url)
     if 'Note' in data or 'Information' in data:
-        raise ValueError("Alpha Vantage rate limited")
+        raise ValueError("Alpha Vantage rate limited or premium endpoint")
     ts = data.get(ts_key, {})
     if not ts:
         raise ValueError("Empty time series")
@@ -264,7 +266,7 @@ def av_history(symbol, period='1y', interval='1d'):
             'high': float(vals.get('2. high', 0)),
             'low': float(vals.get('3. low', 0)),
             'close': float(vals.get('4. close', 0)),
-            'volume': int(vals.get('6. volume', 0)),
+            'volume': int(vals.get('5. volume', vals.get('6. volume', 0))),
         })
     # 按 period 截取
     limit_map = {'1mo': 22, '3mo': 66, '6mo': 132, '1y': 252, '2y': 504, '5y': 1260, 'max': 99999}
@@ -418,7 +420,7 @@ def fh_insider(symbol):
 def fmp_profile(symbol):
     if not FMP_KEY:
         raise ValueError("No FMP_API_KEY")
-    url = f"https://financialmodelingprep.com/api/v3/profile/{symbol}?apikey={FMP_KEY}"
+    url = f"https://financialmodelingprep.com/stable/profile?symbol={symbol}&apikey={FMP_KEY}"
     data = http_get_json(url)
     if not data:
         raise ValueError("Empty FMP profile")
@@ -448,7 +450,7 @@ def fmp_financials(symbol, statement='income'):
         'cashflow': 'cash-flow-statement',
     }
     endpoint = stmt_map.get(statement, statement)
-    url = f"https://financialmodelingprep.com/api/v3/{endpoint}/{symbol}?period=annual&limit=4&apikey={FMP_KEY}"
+    url = f"https://financialmodelingprep.com/stable/{endpoint}?symbol={symbol}&period=annual&limit=4&apikey={FMP_KEY}"
     data = http_get_json(url)
     if not data:
         raise ValueError("Empty FMP financials")
@@ -463,7 +465,7 @@ def fmp_financials(symbol, statement='income'):
 def fmp_dividends(symbol):
     if not FMP_KEY:
         raise ValueError("No FMP_API_KEY")
-    url = f"https://financialmodelingprep.com/api/v3/historical-price-full/stock_dividend/{symbol}?apikey={FMP_KEY}"
+    url = f"https://financialmodelingprep.com/stable/historical-price-eod-dividend?symbol={symbol}&apikey={FMP_KEY}"
     data = http_get_json(url)
     hist = data.get('historical', [])
     records = [{'date': d.get('date', ''), 'dividend': d.get('adjDividend', d.get('dividend', 0))} for d in hist[:20]]
