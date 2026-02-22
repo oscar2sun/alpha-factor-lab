@@ -209,6 +209,18 @@ function renderDetail(r) {
   const panel = document.getElementById('detail-panel');
   let html = '';
 
+  if (r.industry) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>🏭 行业定位与产业链</h3>`;
+    const ind = r.industry;
+    let indText = '';
+    if (ind.summary) indText += ind.summary + '\n\n';
+    if (ind.position) indText += '产业链位置：' + ind.position + '\n';
+    if (ind.market_size) indText += '市场规模：' + ind.market_size + '\n';
+    if (ind.growth) indText += '增长趋势：' + ind.growth + '\n';
+    if (ind.competition) indText += '竞争格局：' + ind.competition;
+    html += `<p class="summary-text">${indText}</p>`;
+    html += '</div>';
+  }
   if (r.moat) {
     html += `<div class="detail-section"><h3><span class="dot"></span>🏰 护城河分析</h3>`;
     if (r.moat.summary) html += `<p class="summary-text">${r.moat.summary}</p>`;
@@ -233,6 +245,19 @@ function renderDetail(r) {
     if (r.valuation.metrics) html += renderMetrics(r.valuation.metrics);
     html += '</div>';
   }
+  if (r.management) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>👔 管理层与治理</h3>`;
+    if (r.management.summary) html += `<p class="summary-text">${r.management.summary}</p>`;
+    if (r.management.key_people) html += `<p class="summary-text">${r.management.key_people.map(x=>'• '+x).join('\n')}</p>`;
+    html += '</div>';
+  }
+  if (r.catalysts) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>📰 催化与动态</h3>`;
+    if (r.catalysts.summary) html += `<p class="summary-text">${r.catalysts.summary}</p>`;
+    if (r.catalysts.events) html += `<p class="summary-text">${r.catalysts.events.map(x=>'• '+x).join('\n')}</p>`;
+    if (r.catalysts.outlook) html += `<p class="summary-text" style="margin-top:8px;color:var(--text2);">${r.catalysts.outlook}</p>`;
+    html += '</div>';
+  }
   if (r.conclusion) {
     html += `<div class="detail-section"><h3><span class="dot"></span>📝 综合结论</h3>`;
     html += `<p class="summary-text">${r.conclusion}</p>`;
@@ -255,7 +280,7 @@ async function init() {
 
   let reports = [];
   try {
-    const resp = await fetch(DATA_FILE);
+    const resp = await fetch(DATA_FILE + '?t=' + Date.now(), {cache: 'no-cache'});
     if (!resp.ok) throw new Error('no data');
     reports = await resp.json();
   } catch(e) {
