@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>技术分析 — Alpha Factor Lab</title>
+<style>
+:root {
+  --bg: #0f1117; --card: #1a1d29; --border: #2a2d3a;
+  --text: #e4e6eb; --text2: #8b8fa3; --accent: #4f8cff;
+  --green: #22c55e; --red: #ef4444; --orange: #f59e0b; --purple: #a855f7;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.header {
+  text-align: center;
+  padding: 32px 0 24px;
+  border-bottom: 1px solid var(--border);
+}
+.header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 4px; }
+.header h1 .icon { font-size: 1.6rem; margin-right: 8px; }
+.header .subtitle { color: var(--text2); font-size: 0.95rem; }
+.nav-links { margin-top: 12px; }
+.nav-links a {
+  margin: 0 8px;
+  padding: 6px 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.85rem;
+  transition: all .2s;
+  display: inline-block;
+}
+.nav-links a:hover { border-color: var(--accent); background: rgba(79,140,255,.1); text-decoration: none; }
+
+.container { max-width: 1200px; margin: 0 auto; padding: 24px 16px; }
+
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text2);
+}
+.empty-state .icon { font-size: 4rem; margin-bottom: 20px; display: block; }
+.empty-state h2 { font-size: 1.3rem; color: var(--text); margin-bottom: 12px; }
+.empty-state p { max-width: 500px; margin: 0 auto; font-size: 0.95rem; line-height: 1.7; }
+
+.report-list { display: flex; flex-direction: column; gap: 16px; }
+
+.report-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.report-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.report-card.active { border-color: var(--accent); }
+
+.report-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.report-name { font-size: 1.15rem; font-weight: 600; }
+.report-code { color: var(--text2); font-size: 0.85rem; margin-left: 8px; }
+.report-date { color: var(--text2); font-size: 0.8rem; }
+
+.price-info { display: flex; align-items: baseline; gap: 12px; margin: 8px 0; }
+.price { font-size: 1.5rem; font-weight: 700; }
+.price.up { color: var(--red); }
+.price.down { color: var(--green); }
+.change { font-size: 0.95rem; font-weight: 600; }
+.change.up { color: var(--red); }
+.change.down { color: var(--green); }
+
+.signal-badge {
+  display: inline-block;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.signal-buy { background: rgba(34,197,94,0.15); color: var(--green); }
+.signal-sell { background: rgba(239,68,68,0.15); color: var(--red); }
+.signal-hold { background: rgba(245,158,11,0.15); color: var(--orange); }
+.signal-neutral { background: rgba(139,143,163,0.15); color: var(--text2); }
+
+.tag-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.tag {
+  background: rgba(79,140,255,0.08);
+  border: 1px solid rgba(79,140,255,0.15);
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  color: var(--text2);
+}
+
+.detail-panel {
+  display: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 30px;
+  margin-top: 16px;
+  animation: fadeIn 0.3s;
+}
+.detail-panel.show { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.detail-section {
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.detail-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.detail-section h3 {
+  font-size: 1rem;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.detail-section h3 .dot { width: 4px; height: 16px; border-radius: 2px; background: var(--accent); }
+
+.chart-container {
+  margin: 16px 0;
+  text-align: center;
+}
+.chart-container img {
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.key-levels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+.level-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 8px;
+  border-left: 3px solid var(--border);
+}
+.level-item.resistance { border-left-color: var(--red); }
+.level-item.support { border-left-color: var(--green); }
+.level-item.current { border-left-color: var(--accent); background: rgba(79,140,255,0.05); }
+.level-item .lk { color: var(--text2); font-size: 0.85rem; }
+.level-item .lv { font-weight: 600; font-size: 0.9rem; }
+
+.signal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.signal-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 8px;
+}
+.signal-item .s-type { font-weight: 600; font-size: 0.88rem; min-width: 100px; }
+.signal-item .s-date { color: var(--text2); font-size: 0.82rem; }
+.signal-item .s-str { font-size: 0.82rem; padding: 2px 8px; border-radius: 4px; }
+.s-str.strong-buy { background: rgba(34,197,94,0.2); color: var(--green); }
+.s-str.buy { background: rgba(34,197,94,0.1); color: #4ade80; }
+.s-str.sell { background: rgba(239,68,68,0.1); color: #f87171; }
+.s-str.strong-sell { background: rgba(239,68,68,0.2); color: var(--red); }
+.s-str.neutral { background: rgba(139,143,163,0.1); color: var(--text2); }
+
+.summary-text {
+  color: var(--text2);
+  font-size: 0.92rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+}
+
+.indicator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+}
+.indicator-card {
+  padding: 14px;
+  background: rgba(255,255,255,0.02);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+.indicator-card h4 { font-size: 0.9rem; margin-bottom: 6px; color: var(--text); }
+.indicator-card p { font-size: 0.85rem; color: var(--text2); line-height: 1.6; }
+
+.footer {
+  text-align: center;
+  padding: 24px;
+  color: var(--text2);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1><span class="icon">📈</span>技术分析</h1>
+  <p class="subtitle">K线形态 · 指标信号 · 买卖点识别</p>
+  <div class="nav-links">
+    <a href="index.html">← 首页</a>
+    <a href="fundamental.html">基本面分析</a>
+    <a href="factor-backtest.html">因子回测</a>
+    <a href="paper-trading.html">模拟盘</a>
+  </div>
+</div>
+
+<div class="container">
+  <div id="report-list" class="report-list"></div>
+  <div id="detail-panel" class="detail-panel"></div>
+  <div id="empty-state" class="empty-state" style="display:none;">
+    <span class="icon">📉</span>
+    <h2>暂无技术分析报告</h2>
+    <p>通过 AI 助手运行技术分析后，报告会自动展示在这里。<br>示例指令：「帮我看看茅台的技术面」</p>
+  </div>
+</div>
+
+<div class="footer">
+  Alpha Factor Lab · <a href="index.html">返回首页</a>
+</div>
+
+<script>
+const DATA_FILE = 'technical-reports.json';
+
+function signalClass(s) {
+  if (!s) return 'signal-neutral';
+  if (s.includes('买入') || s.includes('做多')) return 'signal-buy';
+  if (s.includes('卖出') || s.includes('做空') || s.includes('回避')) return 'signal-sell';
+  if (s.includes('持有') || s.includes('观望')) return 'signal-hold';
+  return 'signal-neutral';
+}
+
+function strengthClass(s) {
+  if (!s) return 'neutral';
+  if (s.includes('强买') || s === '强') return 'strong-buy';
+  if (s.includes('买') || s.includes('中等')) return 'buy';
+  if (s.includes('强卖')) return 'strong-sell';
+  if (s.includes('卖')) return 'sell';
+  return 'neutral';
+}
+
+function renderDetail(r) {
+  const panel = document.getElementById('detail-panel');
+  let html = '';
+
+  // 图表
+  if (r.chart) {
+    html += `<div class="detail-section">
+      <h3><span class="dot"></span>📊 技术分析图表</h3>
+      <div class="chart-container">
+        <img src="${r.chart}?t=${Date.now()}" alt="${r.name} 技术分析图表" loading="lazy"
+             onerror="this.parentElement.innerHTML='<p style=\\'color:var(--text2)\\'>图表暂未生成</p>'">
+      </div>
+    </div>`;
+  }
+
+  // 一句话总结
+  if (r.summary) {
+    html += `<div class="detail-section">
+      <h3><span class="dot"></span>📝 分析摘要</h3>
+      <p class="summary-text">${r.summary}</p>
+    </div>`;
+  }
+
+  const a = r.analysis || {};
+
+  // 趋势研判
+  if (a.trend) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>📈 趋势研判</h3>`;
+    let trendText = '';
+    if (a.trend.short) trendText += '短期趋势：' + a.trend.short + '\n';
+    if (a.trend.mid) trendText += '中期趋势：' + a.trend.mid + '\n';
+    if (a.trend.ma_status) trendText += '均线状态：' + a.trend.ma_status;
+    html += `<p class="summary-text">${trendText}</p></div>`;
+  }
+
+  // 买卖信号
+  if (a.signals && a.signals.length) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>🎯 买卖信号</h3><div class="signal-list">`;
+    a.signals.forEach(s => {
+      html += `<div class="signal-item">
+        <span class="s-type">${s.type||''}</span>
+        <span class="s-date">${s.date||''}</span>
+        <span class="s-str ${strengthClass(s.strength)}">${s.strength||''}</span>
+      </div>`;
+    });
+    html += '</div></div>';
+  }
+
+  // 技术指标
+  if (a.indicators) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>🔧 技术指标</h3><div class="indicator-grid">`;
+    const ind = a.indicators;
+    if (ind.macd) html += `<div class="indicator-card"><h4>MACD</h4><p>${ind.macd}</p></div>`;
+    if (ind.kdj) html += `<div class="indicator-card"><h4>KDJ</h4><p>${ind.kdj}</p></div>`;
+    if (ind.rsi) html += `<div class="indicator-card"><h4>RSI</h4><p>${ind.rsi}</p></div>`;
+    if (ind.boll) html += `<div class="indicator-card"><h4>BOLL布林带</h4><p>${ind.boll}</p></div>`;
+    html += '</div></div>';
+  }
+
+  // 量能分析
+  if (a.volume) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>📊 量能分析</h3>`;
+    let volText = '';
+    if (a.volume.summary) volText += a.volume.summary + '\n';
+    if (a.volume.obv_trend) volText += 'OBV能量潮：' + a.volume.obv_trend;
+    html += `<p class="summary-text">${volText}</p></div>`;
+  }
+
+  // 关键价位
+  if (a.key_levels) {
+    const lv = a.key_levels;
+    html += `<div class="detail-section"><h3><span class="dot"></span>📐 关键价位</h3><div class="key-levels">`;
+    if (lv.strong_resistance) html += `<div class="level-item resistance"><span class="lk">强压力位</span><span class="lv">${lv.strong_resistance}</span></div>`;
+    if (lv.resistance) html += `<div class="level-item resistance"><span class="lk">压力位</span><span class="lv">${lv.resistance}</span></div>`;
+    html += `<div class="level-item current"><span class="lk">当前价</span><span class="lv">${r.price||'-'}</span></div>`;
+    if (lv.support) html += `<div class="level-item support"><span class="lk">支撑位</span><span class="lv">${lv.support}</span></div>`;
+    if (lv.strong_support) html += `<div class="level-item support"><span class="lk">强支撑位</span><span class="lv">${lv.strong_support}</span></div>`;
+    html += '</div></div>';
+  }
+
+  // 操作建议
+  if (a.action) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>💡 操作建议</h3>`;
+    let actText = '';
+    if (a.action.buy_strategy) actText += '买入策略：' + a.action.buy_strategy + '\n';
+    if (a.action.sell_strategy) actText += '卖出策略：' + a.action.sell_strategy + '\n';
+    if (a.action.stop_loss) actText += '止损设置：' + a.action.stop_loss;
+    html += `<p class="summary-text">${actText}</p></div>`;
+  }
+
+  // 风险提示
+  if (r.risks && r.risks.length) {
+    html += `<div class="detail-section"><h3><span class="dot"></span>⚠️ 风险提示</h3>`;
+    html += `<p class="summary-text">${r.risks.map(x=>'• '+x).join('\n')}</p></div>`;
+  }
+
+  panel.innerHTML = html;
+  panel.classList.add('show');
+}
+
+async function init() {
+  const listEl = document.getElementById('report-list');
+  const emptyEl = document.getElementById('empty-state');
+  const panel = document.getElementById('detail-panel');
+
+  let reports = [];
+  try {
+    const resp = await fetch(DATA_FILE + '?t=' + Date.now(), {cache: 'no-cache'});
+    if (!resp.ok) throw new Error('no data');
+    reports = await resp.json();
+  } catch(e) {
+    emptyEl.style.display = 'block';
+    return;
+  }
+
+  if (!reports.length) {
+    emptyEl.style.display = 'block';
+    return;
+  }
+
+  reports.sort((a,b) => (b.date||'').localeCompare(a.date||''));
+
+  listEl.innerHTML = reports.map((r, i) => {
+    const changePct = r.change_pct || 0;
+    const upDown = changePct >= 0 ? 'up' : 'down';
+    return `
+    <div class="report-card" data-idx="${i}">
+      <div class="report-top">
+        <div>
+          <span class="report-name">${r.name||'未知'}</span>
+          <span class="report-code">${r.code||''}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="signal-badge ${signalClass(r.signal)}">${r.signal||'未知'}</span>
+          <span class="report-date">${r.date||''}</span>
+        </div>
+      </div>
+      <div class="price-info">
+        <span class="price ${upDown}">${r.price ? r.price.toFixed(2) : '-'}</span>
+        <span class="change ${upDown}">${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}%</span>
+        <span style="color:var(--text2);font-size:0.85rem;">趋势: ${r.trend||'-'}</span>
+      </div>
+      <div class="tag-bar">
+        ${(r.analysis?.signals||[]).slice(-4).map(s => `<span class="tag">${s.type} (${s.date||''})</span>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+
+  let activeIdx = -1;
+  listEl.querySelectorAll('.report-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const idx = parseInt(card.dataset.idx);
+      listEl.querySelectorAll('.report-card').forEach(c => c.classList.remove('active'));
+      if (idx === activeIdx) {
+        activeIdx = -1;
+        panel.classList.remove('show');
+        return;
+      }
+      activeIdx = idx;
+      card.classList.add('active');
+      renderDetail(reports[idx]);
+    });
+  });
+}
+
+init();
+</script>
+</body>
+</html>
