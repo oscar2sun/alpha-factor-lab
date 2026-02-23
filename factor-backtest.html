@@ -122,7 +122,7 @@ function rBadge(r) {
 /* ====================== DATA LOADING ====================== */
 async function loadFactors() {
   try {
-    const resp = await fetch('factors.json');
+    const resp = await fetch('factors.json?v=' + Date.now());
     FACTORS = await resp.json();
   } catch (e) {
     console.error('Failed to load factors.json:', e);
@@ -309,7 +309,7 @@ async function showDetail(idx) {
         <div class="metric-box"><div class="label">IC 均值</div><div class="value ${Math.abs(m.ic_mean) > 0.03 ? 'good' : 'bad'}">${num(m.ic_mean)}</div></div>
         <div class="metric-box"><div class="label">Rank IC</div><div class="value">${num(m.rank_ic)}</div></div>
         <div class="metric-box"><div class="label">IR</div><div class="value ${Math.abs(m.ir) > 0.3 ? 'good' : 'bad'}">${num(m.ir)}</div></div>
-        <div class="metric-box"><div class="label">IC 显著</div><div class="value ${m.ic_significant ? 'good' : 'bad'}">${m.ic_significant ? '✓ 显著' : '✗ 不显著'}</div></div>
+        <div class="metric-box"><div class="label">IC 显著</div><div class="value ${(m.ic_significant || (m.ic_t && Math.abs(m.ic_t) >= 1.96)) ? 'good' : 'bad'}">${(m.ic_significant || (m.ic_t && Math.abs(m.ic_t) >= 1.96)) ? '✓ 显著 (t=' + num(m.ic_t, 2) + ')' : '✗ 不显著'}</div></div>
         <div class="metric-box"><div class="label">单调性</div><div class="value ${m.monotonicity >= 0.7 ? 'good' : m.monotonicity >= 0.5 ? 'neutral' : 'bad'}">${num(m.monotonicity, 2)}</div></div>
         <div class="metric-box"><div class="label">多空年化</div><div class="value ${m.long_short_annual_return > 0 ? 'good' : 'bad'}">${pct(m.long_short_annual_return, 1)}</div></div>
         <div class="metric-box"><div class="label">多空 Sharpe</div><div class="value ${m.long_short_sharpe >= 1 ? 'good' : m.long_short_sharpe >= 0.5 ? 'neutral' : 'bad'}">${num(m.long_short_sharpe, 2)}</div></div>
