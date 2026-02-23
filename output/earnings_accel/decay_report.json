@@ -1,6 +1,0 @@
-{
-  "factor_name": "factor",
-  "n_dates": 810,
-  "n_stocks": 72,
-  "max_lag": 60,
-  "static_factor": 
