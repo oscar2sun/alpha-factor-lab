@@ -327,14 +327,28 @@ async function init() {
     card.addEventListener('click', () => {
       const idx = parseInt(card.dataset.idx);
       listEl.querySelectorAll('.report-card').forEach(c => c.classList.remove('active'));
+
+      // 收起：点击已展开的卡片
       if (idx === activeIdx) {
         activeIdx = -1;
         panel.classList.remove('show');
+        panel.remove();
+        document.getElementById('report-list').appendChild(panel);
         return;
       }
+
       activeIdx = idx;
       card.classList.add('active');
       renderDetail(reports[idx]);
+
+      // 把详情面板插到当前卡片正下方
+      card.insertAdjacentElement('afterend', panel);
+      panel.classList.add('show');
+
+      // 平滑滚动，让卡片+详情都在视野内
+      setTimeout(() => {
+        card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 50);
     });
   });
 }
