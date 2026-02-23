@@ -417,6 +417,67 @@ def fh_insider(symbol):
     }
 
 # ─── FMP 数据源 ───
+def fmp_quote(symbol):
+    if not FMP_KEY:
+        raise ValueError("No FMP_API_KEY")
+    url = f"https://financialmodelingprep.com/stable/quote?symbol={symbol}&apikey={FMP_KEY}"
+    data = http_get_json(url)
+    if not data:
+        raise ValueError("Empty FMP quote")
+    q = data[0] if isinstance(data, list) else data
+    return {
+        'source': 'fmp',
+        'symbol': symbol,
+        'name': q.get('name', symbol),
+        'price': q.get('price'),
+        'change': q.get('change'),
+        'change_percent': q.get('changesPercentage'),
+        'volume': q.get('volume'),
+        'previous_close': q.get('previousClose'),
+        'open': q.get('open'),
+        'high': q.get('dayHigh'),
+        'low': q.get('dayLow'),
+        'market_cap': q.get('marketCap'),
+        'pe_ratio': q.get('pe'),
+    }
+
+def fmp_history(symbol, period='1y', interval='1d'):
+    if not FMP_KEY:
+        raise ValueError("No FMP_API_KEY")
+    # period → days 映射
+    days_map = {'1mo': 30, '3mo': 90, '6mo': 180, '1y': 365, '2y': 730, '5y': 1825, 'max': 7300}
+    days = days_map.get(period, 365)
+    from datetime import timedelta
+    end_date = datetime.now().strftime('%Y-%m-%d')
+    start_date = (datetime.now() - timedelta(days=days)).strftime('%Y-%m-%d')
+    url = (f"https://financialmodelingprep.com/stable/historical-price-eod/full"
+           f"?symbol={symbol}&from={start_date}&to={end_date}&apikey={FMP_KEY}")
+    data = http_get_json(url)
+    if not data or (isinstance(data, dict) and 'Error' in str(data)):
+        raise ValueError(f"FMP history error: {data}")
+    items = data if isinstance(data, list) else []
+    if not items:
+        raise ValueError("Empty FMP history")
+    items.sort(key=lambda x: x['date'])
+    records = []
+    for item in items:
+        records.append({
+            'date': item['date'],
+            'open': round(float(item['open']), 2),
+            'high': round(float(item['high']), 2),
+            'low': round(float(item['low']), 2),
+            'close': round(float(item['close']), 2),
+            'volume': int(item['volume']),
+        })
+    return {
+        'source': 'fmp',
+        'symbol': symbol,
+        'period': period,
+        'interval': interval,
+        'count': len(records),
+        'data': records
+    }
+
 def fmp_profile(symbol):
     if not FMP_KEY:
         raise ValueError("No FMP_API_KEY")
@@ -478,13 +539,13 @@ def fmp_dividends(symbol):
 
 # ─── Fallback 调度 ───
 FALLBACK_CHAINS = {
-    'quote':      [yf_quote, fh_quote, av_quote],
-    'history':    [yf_history, av_history],
+    'quote':      [yf_quote, fmp_quote, fh_quote, av_quote],
+    'history':    [yf_history, fmp_history, av_history],
     'financials': [yf_financials, fmp_financials],
     'profile':    [yf_profile, fmp_profile],
     'analyst':    [yf_analyst, fh_analyst],
     'news':       [fh_news],
-    'index':      [yf_quote, av_quote],  # 指数用 quote 接口
+    'index':      [yf_quote, av_quote],
     'dividends':  [yf_dividends, fmp_dividends],
     'insider':    [fh_insider],
     'technical':  [av_technical],

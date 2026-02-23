@@ -23,8 +23,8 @@ description: 美股市场信息查询。当用户需要查询美股股价、行�
 
 | 查询类型 | 主数据源 | 备用数据源 | 说明 |
 |----------|----------|------------|------|
-| 实时行情/股价 | yfinance | Finnhub → Alpha Vantage | 当前价、涨跌幅、成交量 |
-| 历史K线 | yfinance | Alpha Vantage | 日/周/月线，最长20年+ |
+| 实时行情/股价 | yfinance | FMP → Finnhub → Alpha Vantage | 当前价、涨跌幅、成交量 |
+| 历史K线 | yfinance | FMP → Alpha Vantage | 日/周/月线，最长20年+ |
 | 财务报表 | yfinance | FMP | 利润表、资产负债表、现金流 |
 | 公司概况 | yfinance | FMP | 市值、行业、描述、员工数 |
 | 分析师评级 | yfinance | Finnhub | 目标价、买卖评级 |
