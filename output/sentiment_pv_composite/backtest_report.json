@@ -1,0 +1,116 @@
+{
+  "factor_name": "sentiment_pv_composite",
+  "static_factor": false,
+  "period": "2022-10-21 ~ 2026-02-13",
+  "n_dates": 808,
+  "n_stocks": 300,
+  "n_groups": 5,
+  "rebalance_freq": 5,
+  "forward_days": 5,
+  "cost_per_trade": 0.002,
+  "metrics": {
+    "ic_mean": 0.003725904570646236,
+    "ic_std": 0.12943628033013707,
+    "ic_positive_pct": 0.4782608695652174,
+    "ic_count": 161,
+    "rank_ic_mean": 6.120799298939118e-05,
+    "rank_ic_std": 0.12887503675927256,
+    "ir": 0.028785627655113645,
+    "ic_t_stat": 0.33077754988006947,
+    "ic_p_value": 0.7412452910988301,
+    "ic_significant_5pct": false,
+    "ic_significant_1pct": false,
+    "group_metrics": {
+      "group_1": {
+        "total_return": 0.17984622231503766,
+        "annualized_return": 0.053000921922893074,
+        "annualized_volatility": 0.21191600920084228,
+        "sharpe_ratio": 0.2501034354259745,
+        "max_drawdown": -0.28184012563600996,
+        "calmar_ratio": 0.1880531446801246
+      },
+      "group_2": {
+        "total_return": -0.08807664094900869,
+        "annualized_return": -0.02838036040968972,
+        "annualized_volatility": 0.1753819603362804,
+        "sharpe_ratio": -0.16182029414697344,
+        "max_drawdown": -0.332646162186648,
+        "calmar_ratio": -0.08531696329556773
+      },
+      "group_3": {
+        "total_return": -0.030304309423044518,
+        "annualized_return": -0.009563382890951377,
+        "annualized_volatility": 0.17528235707249945,
+        "sharpe_ratio": -0.05455987157335987,
+        "max_drawdown": -0.3325758351773433,
+        "calmar_ratio": -0.028755495377022156
+      },
+      "group_4": {
+        "total_return": 0.03784660527546291,
+        "annualized_return": 0.011667659579920553,
+        "annualized_volatility": 0.18247355383262084,
+        "sharpe_ratio": 0.06394164707628291,
+        "max_drawdown": -0.3414231367959096,
+        "calmar_ratio": 0.03417360548384587
+      },
+      "group_5": {
+        "total_return": 0.4973531784173235,
+        "annualized_return": 0.13435265681643083,
+        "annualized_volatility": 0.22936979237635263,
+        "sharpe_ratio": 0.5857469522228255,
+        "max_drawdown": -0.19309203711727738,
+        "calmar_ratio": 0.695795946959893
+      },
+      "long_short": {
+        "total_return": 0.241362805226077,
+        "annualized_return": 0.06984666216096058,
+        "annualized_volatility": 0.14542871971270246,
+        "sharpe_ratio": 0.4802810772104998,
+        "max_drawdown": -0.15896465037779,
+        "calmar_ratio": 0.4393848694974975
+      }
+    },
+    "long_short_total_return": 0.241362805226077,
+    "long_short_ann_return": 0.06984666216096058,
+    "long_short_sharpe": 0.4802810772104998,
+    "long_short_mdd": -0.15896465037779,
+    "turnover_mean": 0.7420717728302918,
+    "turnover_std": 0.03908786774204999,
+    "group_returns_annualized": [
+      0.053000921922893074,
+      -0.02838036040968972,
+      -0.009563382890951377,
+      0.011667659579920553,
+      0.13435265681643083
+    ],
+    "monotonicity": 0.39999999999999997,
+    "holdings_info": {
+      "group_1": {
+        "mean": 58.978934324659235,
+        "min": 58,
+        "max": 60
+      },
+      "group_2": {
+        "mean": 59.586121437422555,
+        "min": 58,
+        "max": 60
+      },
+      "group_3": {
+        "mean": 59.32094175960347,
+        "min": 58,
+        "max": 60
+      },
+      "group_4": {
+        "mean": 59.58983890954151,
+        "min": 58,
+        "max": 60
+      },
+      "group_5": {
+        "mean": 59.82403965303594,
+        "min": 57,
+        "max": 60
+      }
+    },
+    "holdings_imbalance_ratio": 1.014328935204639
+  }
+}
