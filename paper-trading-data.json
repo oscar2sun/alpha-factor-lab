@@ -1,0 +1,120 @@
+{
+  "meta": {
+    "name": "AI投资竞赛 · 三大流派对决",
+    "start_date": "2026-02-24",
+    "initial_cash": 10000000.0,
+    "benchmark": "000300",
+    "benchmark_name": "沪深300",
+    "created_at": "2026-02-23 22:14:25",
+    "updated_at": "2026-02-23 22:14:25"
+  },
+  "players": {
+    "quant": {
+      "name": "因子猎人",
+      "emoji": "🔢",
+      "style": "量化因子选股 · 中证1000 · 周度调仓",
+      "description": "每天读研报挖因子，用统计显著的因子排名选股，系统化交易",
+      "portfolio": {
+        "cash": 10000000.0,
+        "positions": {},
+        "total_value": 10000000.0,
+        "last_update": "2026-02-24"
+      },
+      "nav_history": {
+        "dates": [],
+        "nav": [],
+        "cash_pct": []
+      },
+      "trades": [],
+      "decisions": [],
+      "rebalances": [],
+      "stats": {
+        "total_return_pct": 0.0,
+        "annualized_return_pct": 0.0,
+        "max_drawdown_pct": 0.0,
+        "sharpe_ratio": 0.0,
+        "calmar_ratio": 0.0,
+        "win_rate": 0.0,
+        "profit_loss_ratio": 0.0,
+        "total_trades": 0,
+        "total_fees": 0.0,
+        "current_positions": 0,
+        "turnover_rate": 0.0
+      }
+    },
+    "trader": {
+      "name": "技术猎手",
+      "emoji": "📊",
+      "style": "技术面择时 · 单标的 · 日内决策",
+      "description": "盯一只高波动高换手标的，MACD/KDJ/RSI/BOLL综合分析，择时进出",
+      "portfolio": {
+        "cash": 10000000.0,
+        "positions": {},
+        "total_value": 10000000.0,
+        "last_update": "2026-02-24"
+      },
+      "nav_history": {
+        "dates": [],
+        "nav": [],
+        "cash_pct": []
+      },
+      "trades": [],
+      "decisions": [],
+      "rebalances": [],
+      "stats": {
+        "total_return_pct": 0.0,
+        "annualized_return_pct": 0.0,
+        "max_drawdown_pct": 0.0,
+        "sharpe_ratio": 0.0,
+        "calmar_ratio": 0.0,
+        "win_rate": 0.0,
+        "profit_loss_ratio": 0.0,
+        "total_trades": 0,
+        "total_fees": 0.0,
+        "current_positions": 0,
+        "turnover_rate": 0.0
+      }
+    },
+    "value": {
+      "name": "巴菲特门徒",
+      "emoji": "🏛️",
+      "style": "价值投资 · 集中持仓 · 低换手",
+      "description": "每天读新闻做基本面分析，寻找护城河深的优质公司，长期持有",
+      "portfolio": {
+        "cash": 10000000.0,
+        "positions": {},
+        "total_value": 10000000.0,
+        "last_update": "2026-02-24"
+      },
+      "nav_history": {
+        "dates": [],
+        "nav": [],
+        "cash_pct": []
+      },
+      "trades": [],
+      "decisions": [],
+      "rebalances": [],
+      "stats": {
+        "total_return_pct": 0.0,
+        "annualized_return_pct": 0.0,
+        "max_drawdown_pct": 0.0,
+        "sharpe_ratio": 0.0,
+        "calmar_ratio": 0.0,
+        "win_rate": 0.0,
+        "profit_loss_ratio": 0.0,
+        "total_trades": 0,
+        "total_fees": 0.0,
+        "current_positions": 0,
+        "turnover_rate": 0.0
+      }
+    }
+  },
+  "benchmark": {
+    "dates": [],
+    "nav": []
+  },
+  "leaderboard": {
+    "rankings": [],
+    "updated_at": null
+  }
+}

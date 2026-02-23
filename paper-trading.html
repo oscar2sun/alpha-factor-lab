@@ -3,50 +3,59 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI因子精选 · 模拟盘</title>
+<title>🏆 AI投资竞赛 · 三大流派对决</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
 :root {
-  --bg: #0f1117;
-  --card: #181b23;
-  --border: #2a2d38;
-  --text: #e2e4ea;
-  --text2: #8b8fa3;
-  --accent: #4f8cff;
-  --green: #22c55e;
-  --red: #ef4444;
-  --yellow: #f59e0b;
-  --purple: #a855f7;
+  --bg: #0f1117; --card: #181b23; --border: #2a2d38;
+  --text: #e2e4ea; --text2: #8b8fa3; --accent: #4f8cff;
+  --green: #22c55e; --red: #ef4444; --yellow: #f59e0b; --purple: #a855f7;
+  --quant: #4f8cff; --trader: #f59e0b; --value: #22c55e;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif; line-height:1.6; }
-.container { max-width:1200px; margin:0 auto; padding:24px 16px; }
+.container { max-width:1280px; margin:0 auto; padding:24px 16px; }
 a { color:var(--accent); text-decoration:none; }
 a:hover { text-decoration:underline; }
 
 /* Header */
-.header { text-align:center; padding:32px 0 24px; }
-.header h1 { font-size:2rem; font-weight:700; margin-bottom:4px; }
-.header h1 .icon { font-size:1.6rem; margin-right:8px; }
-.header .subtitle { color:var(--text2); font-size:0.95rem; }
+.header { text-align:center; padding:32px 0 16px; }
+.header h1 { font-size:2rem; font-weight:700; }
+.header .subtitle { color:var(--text2); font-size:0.9rem; margin-top:4px; }
 .nav-links { margin-top:12px; }
-.nav-links a { margin:0 12px; padding:6px 16px; border:1px solid var(--border); border-radius:8px; font-size:0.85rem; transition:all .2s; }
-.nav-links a:hover { border-color:var(--accent); background:rgba(79,140,255,.1); text-decoration:none; }
+.nav-links a { margin:0 8px; padding:6px 14px; border:1px solid var(--border); border-radius:8px; font-size:0.85rem; transition:all .2s; }
+.nav-links a:hover, .nav-links a.active { border-color:var(--accent); background:rgba(79,140,255,.1); text-decoration:none; }
 
-/* KPI Cards */
-.kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin:24px 0; }
-.kpi { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; text-align:center; }
-.kpi .label { font-size:0.78rem; color:var(--text2); margin-bottom:4px; }
-.kpi .value { font-size:1.5rem; font-weight:700; }
-.kpi .value.green { color:var(--green); }
-.kpi .value.red { color:var(--red); }
-.kpi .value.accent { color:var(--accent); }
-.kpi .value.yellow { color:var(--yellow); }
+/* Leaderboard */
+.leaderboard { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:24px 0; }
+.player-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px; cursor:pointer; transition:all .2s; position:relative; overflow:hidden; }
+.player-card:hover { border-color:var(--accent); transform:translateY(-2px); }
+.player-card.active { border-color:var(--accent); box-shadow:0 0 20px rgba(79,140,255,.15); }
+.player-card .rank { position:absolute; top:12px; right:16px; font-size:1.8rem; }
+.player-card .emoji { font-size:2rem; margin-bottom:8px; display:block; }
+.player-card .name { font-size:1.1rem; font-weight:700; }
+.player-card .style { color:var(--text2); font-size:0.78rem; margin-top:2px; }
+.player-card .return { font-size:1.8rem; font-weight:700; margin-top:12px; }
+.player-card .return.green { color:var(--green); }
+.player-card .return.red { color:var(--red); }
+.player-card .return.neutral { color:var(--text2); }
+.player-card .sub-stats { display:flex; gap:16px; margin-top:8px; font-size:0.82rem; color:var(--text2); }
+.player-card .sub-stats span { display:flex; flex-direction:column; }
+.player-card .sub-stats .label { font-size:0.7rem; }
+.player-card .sub-stats .val { font-weight:600; color:var(--text); }
 
 /* Section */
 .section { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:20px; }
-.section h2 { font-size:1.15rem; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.section h2 { font-size:1.1rem; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
 .section h2 .dot { width:4px; height:18px; border-radius:2px; background:var(--accent); }
+
+/* Tabs */
+.tabs { display:flex; gap:8px; margin-bottom:20px; }
+.tab-btn { background:var(--bg); border:1px solid var(--border); color:var(--text2); padding:8px 20px; border-radius:8px; cursor:pointer; font-size:0.85rem; transition:all .2s; }
+.tab-btn:hover { border-color:var(--accent); color:var(--text); }
+.tab-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+.tab-content { display:none; }
+.tab-content.active { display:block; }
 
 /* Table */
 table { width:100%; border-collapse:collapse; font-size:0.85rem; }
@@ -55,37 +64,43 @@ td { padding:10px 8px; border-bottom:1px solid var(--border); }
 tr:last-child td { border-bottom:none; }
 .tag-buy { background:rgba(34,197,94,.15); color:var(--green); padding:2px 10px; border-radius:4px; font-size:0.8rem; }
 .tag-sell { background:rgba(239,68,68,.15); color:var(--red); padding:2px 10px; border-radius:4px; font-size:0.8rem; }
+.tag-hold { background:rgba(139,143,163,.15); color:var(--text2); padding:2px 10px; border-radius:4px; font-size:0.8rem; }
 
-/* Chart container */
-.chart-box { position:relative; height:360px; }
-.chart-half { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-@media(max-width:768px) { .chart-half { grid-template-columns:1fr; } }
+/* Stats comparison */
+.stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; }
+.stat-item { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:12px; text-align:center; }
+.stat-item .label { font-size:0.75rem; color:var(--text2); }
+.stat-item .values { margin-top:6px; display:flex; flex-direction:column; gap:2px; }
+.stat-item .pv { font-size:0.82rem; display:flex; justify-content:space-between; }
+.stat-item .pv .pname { color:var(--text2); }
 
-/* Rebalance cards */
-.reb-card { background:var(--bg); border:1px solid var(--border); border-radius:8px; padding:14px 18px; margin-bottom:10px; }
-.reb-card .date { color:var(--accent); font-weight:600; font-size:0.9rem; }
-.reb-card .meta { color:var(--text2); font-size:0.82rem; margin-top:4px; }
+/* Chart */
+.chart-box { position:relative; height:380px; }
 
-/* Empty state */
+/* Decision timeline */
+.timeline { max-height:500px; overflow-y:auto; }
+.timeline-item { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); }
+.timeline-item:last-child { border-bottom:none; }
+.timeline-item .time { min-width:80px; color:var(--text2); font-size:0.8rem; }
+.timeline-item .badge { min-width:24px; font-size:1.1rem; }
+.timeline-item .content { flex:1; }
+.timeline-item .content .title { font-weight:600; font-size:0.88rem; }
+.timeline-item .content .detail { color:var(--text2); font-size:0.82rem; margin-top:2px; }
+.timeline-item .action-tag { font-size:0.75rem; padding:1px 8px; border-radius:3px; margin-left:8px; }
+
+/* Empty */
 .empty { text-align:center; padding:48px 20px; color:var(--text2); }
 .empty .icon { font-size:3rem; margin-bottom:12px; }
-
-/* Pagination */
-.pagination { display:flex; justify-content:center; gap:8px; margin-top:14px; }
-.pagination button { background:var(--bg); border:1px solid var(--border); color:var(--text); padding:6px 14px; border-radius:6px; cursor:pointer; font-size:0.82rem; }
-.pagination button:hover { border-color:var(--accent); }
-.pagination button.active { background:var(--accent); border-color:var(--accent); color:#fff; }
 
 /* Footer */
 .footer { text-align:center; padding:32px 0; color:var(--text2); font-size:0.8rem; line-height:1.8; }
 .footer .warn { color:var(--yellow); font-weight:500; margin-bottom:8px; display:block; }
 
 /* Responsive */
-@media(max-width:600px) {
-  .kpi-grid { grid-template-columns:repeat(2,1fr); }
+@media(max-width:768px) {
+  .leaderboard { grid-template-columns:1fr; }
   .header h1 { font-size:1.4rem; }
-  .chart-box { height:260px; }
-  table { font-size:0.78rem; }
+  .chart-box { height:280px; }
 }
 </style>
 </head>
@@ -94,278 +109,375 @@ tr:last-child td { border-bottom:none; }
 
 <!-- Header -->
 <div class="header">
-  <h1><span class="icon">📈</span>AI因子精选 · 模拟盘</h1>
-  <div class="subtitle">
-    起始日期: 2026-02-17 &nbsp;|&nbsp;
-    初始资金: ¥1,000,000 &nbsp;|&nbsp;
-    基准: 沪深300
-  </div>
+  <h1>🏆 AI投资竞赛 · 三大流派对决</h1>
+  <div class="subtitle" id="metaInfo"></div>
   <div class="nav-links">
     <a href="index.html">← 首页</a>
     <a href="factor-backtest.html">因子回测</a>
-    <a href="paper-trading.html" style="border-color:var(--accent);background:rgba(79,140,255,.1);">模拟盘</a>
+    <a href="paper-trading.html" class="active">模拟竞赛</a>
     <a href="fundamental.html">基本面分析</a>
+    <a href="technical.html">技术分析</a>
   </div>
 </div>
 
-<!-- KPI -->
-<div class="kpi-grid" id="kpiArea"></div>
+<!-- Leaderboard -->
+<div class="leaderboard" id="leaderboard"></div>
 
 <!-- NAV Chart -->
 <div class="section">
-  <h2><span class="dot"></span>净值曲线</h2>
+  <h2><span class="dot"></span>净值曲线对比</h2>
   <div class="chart-box" id="navChartWrap"></div>
 </div>
 
-<!-- Holdings -->
+<!-- Stats Comparison -->
 <div class="section">
-  <h2><span class="dot"></span>当前持仓</h2>
-  <div class="chart-half">
-    <div id="holdingsTable"></div>
-    <div style="position:relative;height:300px;" id="pieWrap"></div>
-  </div>
+  <h2><span class="dot"></span>核心指标对比</h2>
+  <div id="statsComparison"></div>
 </div>
 
-<!-- Trades -->
+<!-- Player Detail Tabs -->
 <div class="section">
-  <h2><span class="dot"></span>交易记录</h2>
-  <div id="tradesArea"></div>
+  <h2><span class="dot"></span>选手详情</h2>
+  <div class="tabs" id="playerTabs"></div>
+  <div id="playerDetails"></div>
 </div>
 
-<!-- Rebalance -->
+<!-- Today's Activity -->
 <div class="section">
-  <h2><span class="dot"></span>调仓历史</h2>
-  <div id="rebArea"></div>
-</div>
-
-<!-- Fee Analysis -->
-<div class="section">
-  <h2><span class="dot"></span>费用分析</h2>
-  <div class="chart-half">
-    <div style="position:relative;height:300px;" id="feeBarWrap"></div>
-    <div style="position:relative;height:300px;" id="feePieWrap"></div>
-  </div>
+  <h2><span class="dot"></span>最新动态</h2>
+  <div class="timeline" id="activityTimeline"></div>
 </div>
 
 <!-- Footer -->
 <div class="footer">
-  <span class="warn">⚠️ 风险提示：本页面为模拟盘，不反映真实交易，仅供研究参考</span>
-  费率设置: 佣金万三(双向) | 印花税万五(仅卖出) | 过户费十万分之一 | 模拟滑点千一<br>
-  最低佣金: ¥5 | 调仓频率: monthly<br><br>
-  最后更新: 2026-02-17 03:31:55<br>
+  <span class="warn">⚠️ 风险提示：本页面为AI模拟竞赛，不反映真实交易，仅供研究参考</span>
+  费率: 佣金万三(双向) | 印花税万五(仅卖出) | 过户费十万分之一 | 模拟滑点千一<br>
+  <span id="updateTime"></span><br>
   Powered by <a href="https://oscar2sun.github.io/alpha-factor-lab/">Alpha Factor Lab</a>
 </div>
 
 </div>
 
 <script>
-// ===== Embedded Data =====
-const CONFIG = {"name": "AI因子精选", "initial_cash": 1000000, "start_date": "2026-02-17", "benchmark": "000300", "commission_rate": 0.0003, "stamp_duty_rate": 0.0005, "slippage_rate": 0.001, "min_commission": 5, "transfer_fee_rate": 1e-05, "rebalance_freq": "monthly", "notes": "基于量化因子筛选的A股模拟组合"};
-const PORTFOLIO = {"cash": 1000000, "positions": {}, "last_update": "2026-02-17", "net_value": 1.0};
-const TRADES = {"trades": []};
-const NAV_HISTORY = {"dates": [], "nav": [], "benchmark_nav": [], "cash_pct": [], "position_count": []};
-const REBALANCE_HISTORY = {"rebalances": []};
-const SUMMARY = {"status": "empty", "message": "暂无数据"};
+// ===== Data Loading =====
+const PLAYER_COLORS = { quant: '#4f8cff', trader: '#f59e0b', value: '#22c55e' };
+const PLAYER_IDS = ['quant', 'trader', 'value'];
+const MEDALS = ['🥇', '🥈', '🥉'];
 
-// ===== Helpers =====
+let DATA = null;
+
+async function loadData() {
+  try {
+    const resp = await fetch('paper-trading-data.json?v=' + Date.now());
+    DATA = await resp.json();
+    renderAll();
+  } catch (e) {
+    console.error('Failed to load data:', e);
+    document.getElementById('leaderboard').innerHTML = '<div class="empty" style="grid-column:1/-1"><div class="icon">📡</div>数据加载失败<br><small>请检查 paper-trading-data.json</small></div>';
+  }
+}
+
 function fmt(n, d=2) { return n == null ? '—' : Number(n).toFixed(d); }
-function fmtMoney(n) { return n == null ? '—' : '¥' + Number(n).toLocaleString('zh-CN', {minimumFractionDigits:2, maximumFractionDigits:2}); }
-function pctClass(v) { return v > 0 ? 'green' : v < 0 ? 'red' : 'accent'; }
+function fmtMoney(n) { return n == null ? '—' : '¥' + Number(n).toLocaleString('zh-CN', {minimumFractionDigits:0, maximumFractionDigits:0}); }
+function pctClass(v) { return v > 0.01 ? 'green' : v < -0.01 ? 'red' : 'neutral'; }
 
-// ===== KPI =====
-(function() {
-  const area = document.getElementById('kpiArea');
-  const isEmpty = SUMMARY.status === 'empty';
-  const kpis = [
-    { label:'累计收益', value: isEmpty ? '—' : fmt(SUMMARY.total_return_pct)+'%', cls: isEmpty ? 'accent' : pctClass(SUMMARY.total_return_pct) },
-    { label:'年化收益', value: isEmpty ? '—' : fmt(SUMMARY.annualized_return_pct)+'%', cls: isEmpty ? 'accent' : pctClass(SUMMARY.annualized_return_pct) },
-    { label:'最大回撤', value: isEmpty ? '—' : fmt(SUMMARY.max_drawdown_pct)+'%', cls: 'red' },
-    { label:'夏普比率', value: isEmpty ? '—' : fmt(SUMMARY.sharpe_ratio), cls: 'accent' },
-    { label:'总交易笔数', value: isEmpty ? '0' : SUMMARY.total_trades, cls: 'accent' },
-    { label:'累计费用', value: isEmpty ? '¥0' : fmtMoney(SUMMARY.total_fees), cls: 'yellow' },
-    { label:'当前持仓', value: isEmpty ? '0 只' : SUMMARY.current_positions + ' 只', cls: 'accent' },
-    { label:'可用资金', value: fmtMoney(PORTFOLIO.cash), cls: 'accent' },
-  ];
-  area.innerHTML = kpis.map(k => `
-    <div class="kpi"><div class="label">${k.label}</div><div class="value ${k.cls}">${k.value}</div></div>
-  `).join('');
-})();
+// ===== Render =====
+function renderAll() {
+  renderMeta();
+  renderLeaderboard();
+  renderNavChart();
+  renderStatsComparison();
+  renderPlayerTabs();
+  renderActivityTimeline();
+}
 
-// ===== NAV Chart =====
-(function() {
-  const wrap = document.getElementById('navChartWrap');
-  if (!NAV_HISTORY.dates || NAV_HISTORY.dates.length === 0) {
-    wrap.innerHTML = '<div class="empty"><div class="icon">📉</div>暂无净值数据<br><small>首次调仓后将自动记录</small></div>';
-    return;
-  }
-  wrap.innerHTML = '<canvas id="navChart"></canvas>';
-  const datasets = [
-    { label:'组合净值', data:NAV_HISTORY.nav, borderColor:'#4f8cff', backgroundColor:'rgba(79,140,255,.08)', fill:true, tension:.3, pointRadius:0, borderWidth:2 },
-  ];
-  if (NAV_HISTORY.benchmark_nav && NAV_HISTORY.benchmark_nav.some(v => v !== null)) {
-    datasets.push({ label:'沪深300', data:NAV_HISTORY.benchmark_nav, borderColor:'#8b8fa3', borderDash:[5,3], tension:.3, pointRadius:0, borderWidth:1.5, fill:false });
-  }
-  new Chart(document.getElementById('navChart'), {
-    type:'line',
-    data:{ labels:NAV_HISTORY.dates, datasets },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      interaction:{ mode:'index', intersect:false },
-      plugins:{ legend:{ labels:{ color:'#8b8fa3', font:{size:12} } }, tooltip:{ callbacks:{ label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(4) } } },
-      scales:{
-        x:{ ticks:{ color:'#8b8fa3', maxTicksLimit:10 }, grid:{ color:'rgba(255,255,255,.05)' } },
-        y:{ ticks:{ color:'#8b8fa3' }, grid:{ color:'rgba(255,255,255,.05)' } }
-      }
-    }
-  });
-})();
+function renderMeta() {
+  const m = DATA.meta;
+  document.getElementById('metaInfo').textContent = 
+    `起始日期: ${m.start_date} | 初始资金: ${fmtMoney(m.initial_cash)}/人 | 基准: ${m.benchmark_name}`;
+  document.getElementById('updateTime').textContent = `最后更新: ${m.updated_at}`;
+}
 
-// ===== Holdings =====
-(function() {
-  const tableDiv = document.getElementById('holdingsTable');
-  const pieWrap = document.getElementById('pieWrap');
-  const pos = PORTFOLIO.positions;
-  const codes = Object.keys(pos);
-
-  if (codes.length === 0) {
-    tableDiv.innerHTML = '<div class="empty"><div class="icon">📋</div>暂无持仓<br><small>组合建仓后将显示持仓明细</small></div>';
-    pieWrap.innerHTML = '<div class="empty"><div class="icon">🍩</div>暂无仓位数据</div>';
-    return;
-  }
-
-  // Table
-  let rows = codes.map(c => {
-    const p = pos[c];
-    const mv = (p.avg_cost * p.volume);
-    return `<tr><td>${p.code}</td><td>${p.name}</td><td>${p.volume}</td><td>${fmt(p.avg_cost,2)}</td><td>${fmtMoney(mv)}</td></tr>`;
-  }).join('');
-  tableDiv.innerHTML = `<table><thead><tr><th>代码</th><th>名称</th><th>持股</th><th>成本价</th><th>市值</th></tr></thead><tbody>${rows}</tbody></table>`;
-
-  // Pie
-  const labels = codes.map(c => pos[c].name);
-  const values = codes.map(c => pos[c].avg_cost * pos[c].volume);
-  labels.push('现金');
-  values.push(PORTFOLIO.cash);
-  const colors = ['#4f8cff','#22c55e','#ef4444','#f59e0b','#a855f7','#06b6d4','#ec4899','#8b5cf6','#14b8a6','#f97316','#6366f1','#64748b'];
-  pieWrap.innerHTML = '<canvas id="pieChart"></canvas>';
-  new Chart(document.getElementById('pieChart'), {
-    type:'doughnut',
-    data:{ labels, datasets:[{ data:values, backgroundColor:colors.slice(0,values.length), borderWidth:0 }] },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'right', labels:{ color:'#8b8fa3', font:{size:11}, padding:8 } },
-        tooltip:{ callbacks:{ label: ctx => ctx.label + ': ' + fmtMoney(ctx.parsed) } }
-      }
-    }
-  });
-})();
-
-// ===== Trades =====
-(function() {
-  const area = document.getElementById('tradesArea');
-  const trades = (TRADES.trades || []).slice().reverse();
-  if (trades.length === 0) {
-    area.innerHTML = '<div class="empty"><div class="icon">📝</div>暂无交易记录<br><small>执行买卖操作后将自动记录</small></div>';
-    return;
-  }
-  const perPage = 10;
-  let page = 0;
-  function render() {
-    const start = page * perPage;
-    const slice = trades.slice(start, start + perPage);
-    const totalPages = Math.ceil(trades.length / perPage);
-    let rows = slice.map(t => {
-      const dir = t.direction === 'buy' ? '<span class="tag-buy">买入</span>' : '<span class="tag-sell">卖出</span>';
-      const fee = (t.commission||0) + (t.stamp_duty||0) + (t.transfer_fee||0) + (t.slippage_cost||0);
-      return `<tr><td>${t.date}</td><td>${t.code}</td><td>${t.name}</td><td>${dir}</td><td>${fmt(t.price)}</td><td>${t.volume}</td><td>${fmtMoney(t.amount)}</td><td>${fmtMoney(fee)}</td></tr>`;
+function renderLeaderboard() {
+  const el = document.getElementById('leaderboard');
+  const rankings = DATA.leaderboard.rankings;
+  
+  if (!rankings || rankings.length === 0) {
+    // No rankings yet, show all players as equal
+    el.innerHTML = PLAYER_IDS.map(pid => {
+      const p = DATA.players[pid];
+      return `
+        <div class="player-card" data-player="${pid}" onclick="selectPlayer('${pid}')">
+          <span class="emoji">${p.emoji}</span>
+          <div class="name">${p.name}</div>
+          <div class="style">${p.style}</div>
+          <div class="return neutral">—</div>
+          <div class="sub-stats">
+            <span><span class="label">总资产</span><span class="val">${fmtMoney(p.portfolio.total_value)}</span></span>
+            <span><span class="label">持仓</span><span class="val">${Object.keys(p.portfolio.positions).length}只</span></span>
+          </div>
+        </div>`;
     }).join('');
+    return;
+  }
+  
+  el.innerHTML = rankings.map((r, i) => {
+    const p = DATA.players[r.player_id];
+    const retPct = r.total_return_pct;
+    return `
+      <div class="player-card" data-player="${r.player_id}" onclick="selectPlayer('${r.player_id}')" style="border-top:3px solid ${PLAYER_COLORS[r.player_id]}">
+        <span class="rank">${MEDALS[i] || '#'+(i+1)}</span>
+        <span class="emoji">${r.emoji}</span>
+        <div class="name">${r.name}</div>
+        <div class="style">${p.style}</div>
+        <div class="return ${pctClass(retPct)}">${retPct >= 0 ? '+' : ''}${fmt(retPct)}%</div>
+        <div class="sub-stats">
+          <span><span class="label">Sharpe</span><span class="val">${fmt(r.sharpe_ratio)}</span></span>
+          <span><span class="label">回撤</span><span class="val">${fmt(r.max_drawdown_pct)}%</span></span>
+          <span><span class="label">交易</span><span class="val">${r.total_trades}笔</span></span>
+        </div>
+      </div>`;
+  }).join('');
+}
 
-    let paginationHtml = '';
-    if (totalPages > 1) {
-      paginationHtml = '<div class="pagination">';
-      for (let i = 0; i < totalPages; i++) {
-        paginationHtml += `<button class="${i===page?'active':''}" data-p="${i}">${i+1}</button>`;
-      }
-      paginationHtml += '</div>';
+function renderNavChart() {
+  const wrap = document.getElementById('navChartWrap');
+  const hasData = PLAYER_IDS.some(pid => DATA.players[pid].nav_history.dates.length > 0);
+  
+  if (!hasData) {
+    wrap.innerHTML = '<div class="empty"><div class="icon">📈</div>竞赛尚未开始<br><small>首个交易日后将显示净值曲线</small></div>';
+    return;
+  }
+  
+  wrap.innerHTML = '<canvas id="navChart"></canvas>';
+  const datasets = [];
+  
+  PLAYER_IDS.forEach(pid => {
+    const p = DATA.players[pid];
+    if (p.nav_history.dates.length > 0) {
+      datasets.push({
+        label: p.name,
+        data: p.nav_history.nav,
+        borderColor: PLAYER_COLORS[pid],
+        backgroundColor: 'transparent',
+        tension: 0.3,
+        pointRadius: p.nav_history.nav.length > 30 ? 0 : 3,
+        borderWidth: 2.5
+      });
     }
-
-    area.innerHTML = `<div style="overflow-x:auto;"><table><thead><tr><th>日期</th><th>代码</th><th>名称</th><th>方向</th><th>价格</th><th>数量</th><th>金额</th><th>费用</th></tr></thead><tbody>${rows}</tbody></table></div>${paginationHtml}`;
-
-    area.querySelectorAll('.pagination button').forEach(btn => {
-      btn.addEventListener('click', () => { page = parseInt(btn.dataset.p); render(); });
+  });
+  
+  // Benchmark
+  if (DATA.benchmark.dates.length > 0) {
+    datasets.push({
+      label: DATA.meta.benchmark_name,
+      data: DATA.benchmark.nav,
+      borderColor: '#8b8fa3',
+      borderDash: [5, 3],
+      backgroundColor: 'transparent',
+      tension: 0.3,
+      pointRadius: 0,
+      borderWidth: 1.5
     });
   }
-  render();
-})();
+  
+  const labels = DATA.benchmark.dates.length > 0 ? DATA.benchmark.dates :
+    PLAYER_IDS.reduce((best, pid) => {
+      const d = DATA.players[pid].nav_history.dates;
+      return d.length > best.length ? d : best;
+    }, []);
+  
+  new Chart(document.getElementById('navChart'), {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { labels: { color: '#8b8fa3', font: { size: 12 } } },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.parsed.y.toFixed(4) } }
+      },
+      scales: {
+        x: { ticks: { color: '#8b8fa3', maxTicksLimit: 12 }, grid: { color: 'rgba(255,255,255,.05)' } },
+        y: { ticks: { color: '#8b8fa3' }, grid: { color: 'rgba(255,255,255,.05)' } }
+      }
+    }
+  });
+}
 
-// ===== Rebalance =====
-(function() {
-  const area = document.getElementById('rebArea');
-  const rebs = (REBALANCE_HISTORY.rebalances || []).slice().reverse();
-  if (rebs.length === 0) {
-    area.innerHTML = '<div class="empty"><div class="icon">🔄</div>暂无调仓记录<br><small>执行调仓操作后将在此展示</small></div>';
-    return;
+function renderStatsComparison() {
+  const el = document.getElementById('statsComparison');
+  const metrics = [
+    { key: 'total_return_pct', label: '累计收益', suffix: '%', signed: true },
+    { key: 'annualized_return_pct', label: '年化收益', suffix: '%', signed: true },
+    { key: 'max_drawdown_pct', label: '最大回撤', suffix: '%' },
+    { key: 'sharpe_ratio', label: 'Sharpe' },
+    { key: 'calmar_ratio', label: 'Calmar' },
+    { key: 'win_rate', label: '胜率', suffix: '%' },
+    { key: 'total_trades', label: '总交易', suffix: '笔', isInt: true },
+    { key: 'total_fees', label: '累计费用', isMoney: true }
+  ];
+  
+  el.innerHTML = '<div class="stats-grid">' + metrics.map(m => {
+    const values = PLAYER_IDS.map(pid => {
+      const p = DATA.players[pid];
+      const v = p.stats[m.key] || 0;
+      let display;
+      if (m.isMoney) display = fmtMoney(v);
+      else if (m.isInt) display = v + (m.suffix || '');
+      else display = (m.signed && v > 0 ? '+' : '') + fmt(v) + (m.suffix || '');
+      return `<div class="pv"><span class="pname">${p.emoji}</span><span style="color:${PLAYER_COLORS[pid]}">${display}</span></div>`;
+    }).join('');
+    return `<div class="stat-item"><div class="label">${m.label}</div><div class="values">${values}</div></div>`;
+  }).join('') + '</div>';
+}
+
+// ===== Player Detail =====
+let selectedPlayer = 'quant';
+
+function selectPlayer(pid) {
+  selectedPlayer = pid;
+  document.querySelectorAll('.player-card').forEach(c => c.classList.remove('active'));
+  document.querySelector(`.player-card[data-player="${pid}"]`)?.classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.player === pid));
+  renderPlayerDetail(pid);
+}
+
+function renderPlayerTabs() {
+  const el = document.getElementById('playerTabs');
+  el.innerHTML = PLAYER_IDS.map(pid => {
+    const p = DATA.players[pid];
+    return `<button class="tab-btn ${pid === selectedPlayer ? 'active' : ''}" data-player="${pid}" onclick="selectPlayer('${pid}')">${p.emoji} ${p.name}</button>`;
+  }).join('');
+  renderPlayerDetail(selectedPlayer);
+}
+
+function renderPlayerDetail(pid) {
+  const el = document.getElementById('playerDetails');
+  const p = DATA.players[pid];
+  const positions = Object.values(p.portfolio.positions);
+  const trades = (p.trades || []).slice().reverse().slice(0, 20);
+  const decisions = (p.decisions || []).slice().reverse().slice(0, 15);
+  const rebalances = (p.rebalances || []).slice().reverse().slice(0, 10);
+  
+  // Holdings
+  let holdingsHtml;
+  if (positions.length === 0) {
+    holdingsHtml = '<div class="empty"><div class="icon">📋</div>空仓中<br><small>暂无持仓</small></div>';
+  } else {
+    holdingsHtml = `<div style="overflow-x:auto"><table>
+      <thead><tr><th>代码</th><th>名称</th><th>持股</th><th>成本</th><th>现价</th><th>市值</th><th>盈亏</th></tr></thead>
+      <tbody>${positions.map(pos => `<tr>
+        <td>${pos.code}</td><td>${pos.name}</td><td>${pos.volume}</td>
+        <td>¥${fmt(pos.avg_cost)}</td><td>¥${fmt(pos.current_price)}</td>
+        <td>${fmtMoney(pos.market_value)}</td>
+        <td style="color:${pos.pnl_pct >= 0 ? 'var(--green)' : 'var(--red)'}">${pos.pnl_pct >= 0 ? '+' : ''}${fmt(pos.pnl_pct)}%</td>
+      </tr>`).join('')}</tbody></table></div>`;
   }
-  area.innerHTML = rebs.map(r => `
-    <div class="reb-card">
-      <div class="date">${r.date} — ${r.note || '调仓'}</div>
-      <div class="meta">
-        总资产: ${fmtMoney(r.total_value_before)} &nbsp;|&nbsp;
-        卖出 ${r.sells} 只 &nbsp;|&nbsp; 买入 ${r.buys} 只 &nbsp;|&nbsp;
-        费用: ${fmtMoney(r.total_fees)}
-      </div>
+  
+  // Trades
+  let tradesHtml;
+  if (trades.length === 0) {
+    tradesHtml = '<div class="empty"><div class="icon">📝</div>暂无交易记录</div>';
+  } else {
+    tradesHtml = `<div style="overflow-x:auto"><table>
+      <thead><tr><th>日期</th><th>代码</th><th>名称</th><th>方向</th><th>价格</th><th>数量</th><th>金额</th><th>原因</th></tr></thead>
+      <tbody>${trades.map(t => `<tr>
+        <td>${t.date}</td><td>${t.code}</td><td>${t.name}</td>
+        <td><span class="tag-${t.direction}">${t.direction === 'buy' ? '买入' : '卖出'}</span></td>
+        <td>¥${fmt(t.price)}</td><td>${t.volume}</td><td>${fmtMoney(t.amount)}</td>
+        <td style="color:var(--text2);font-size:0.8rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${t.reason || ''}">${t.reason || '—'}</td>
+      </tr>`).join('')}</tbody></table></div>`;
+  }
+  
+  // Decisions
+  let decisionsHtml;
+  if (decisions.length === 0) {
+    decisionsHtml = '<div class="empty"><div class="icon">🧠</div>暂无决策日志</div>';
+  } else {
+    decisionsHtml = '<div class="timeline">' + decisions.map(d => {
+      const actionTag = d.action === 'buy' ? '<span class="action-tag tag-buy">买入</span>' :
+                        d.action === 'sell' ? '<span class="action-tag tag-sell">卖出</span>' :
+                        d.action === 'rebalance' ? '<span class="action-tag" style="background:rgba(79,140,255,.15);color:var(--accent)">调仓</span>' :
+                        '<span class="action-tag tag-hold">持仓</span>';
+      return `<div class="timeline-item">
+        <div class="time">${d.date}<br>${d.time || ''}</div>
+        <div class="content"><div class="title">${d.summary}${actionTag}</div>${d.detail ? `<div class="detail">${d.detail}</div>` : ''}</div>
+      </div>`;
+    }).join('') + '</div>';
+  }
+  
+  // Cash info
+  const cashInfo = `<div style="display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap">
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px">
+      <span style="color:var(--text2);font-size:0.82rem">可用资金</span><br>
+      <span style="font-size:1.2rem;font-weight:700">${fmtMoney(p.portfolio.cash)}</span>
     </div>
-  `).join('');
-})();
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px">
+      <span style="color:var(--text2);font-size:0.82rem">总资产</span><br>
+      <span style="font-size:1.2rem;font-weight:700">${fmtMoney(p.portfolio.total_value)}</span>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px">
+      <span style="color:var(--text2);font-size:0.82rem">持仓数</span><br>
+      <span style="font-size:1.2rem;font-weight:700">${positions.length}只</span>
+    </div>
+  </div>`;
+  
+  el.innerHTML = `
+    ${cashInfo}
+    <h3 style="font-size:0.95rem;margin:16px 0 8px;color:var(--text2)">📋 当前持仓</h3>
+    ${holdingsHtml}
+    <h3 style="font-size:0.95rem;margin:24px 0 8px;color:var(--text2)">📝 交易记录 <small style="color:var(--text2)">(最近20笔)</small></h3>
+    ${tradesHtml}
+    <h3 style="font-size:0.95rem;margin:24px 0 8px;color:var(--text2)">🧠 决策日志 <small style="color:var(--text2)">(最近15条)</small></h3>
+    ${decisionsHtml}
+  `;
+}
 
-// ===== Fee Analysis =====
-(function() {
-  const barWrap = document.getElementById('feeBarWrap');
-  const pieWrap = document.getElementById('feePieWrap');
-  const s = SUMMARY;
-
-  if (s.status === 'empty' || (s.total_fees || 0) === 0) {
-    barWrap.innerHTML = '<div class="empty"><div class="icon">💰</div>暂无费用数据</div>';
-    pieWrap.innerHTML = '<div class="empty"><div class="icon">📊</div>暂无费用分析</div>';
+// ===== Activity Timeline =====
+function renderActivityTimeline() {
+  const el = document.getElementById('activityTimeline');
+  
+  // Merge all decisions from all players, sort by date desc
+  let allDecisions = [];
+  PLAYER_IDS.forEach(pid => {
+    const p = DATA.players[pid];
+    (p.decisions || []).forEach(d => {
+      allDecisions.push({ ...d, player_id: pid, player_emoji: p.emoji, player_name: p.name });
+    });
+  });
+  
+  allDecisions.sort((a, b) => {
+    const da = a.date + (a.time || '');
+    const db = b.date + (b.time || '');
+    return db.localeCompare(da);
+  });
+  
+  const recent = allDecisions.slice(0, 20);
+  
+  if (recent.length === 0) {
+    el.innerHTML = '<div class="empty"><div class="icon">📡</div>竞赛尚未开始<br><small>选手开始行动后将在此展示动态</small></div>';
     return;
   }
+  
+  el.innerHTML = recent.map(d => {
+    const actionColors = { buy: 'var(--green)', sell: 'var(--red)', rebalance: 'var(--accent)', hold: 'var(--text2)' };
+    const actionText = { buy: '买入', sell: '卖出', rebalance: '调仓', hold: '观望' };
+    return `<div class="timeline-item">
+      <div class="time">${d.date}<br>${d.time || ''}</div>
+      <div class="badge">${d.player_emoji}</div>
+      <div class="content">
+        <div class="title">${d.player_name}: ${d.summary}
+          <span style="color:${actionColors[d.action] || 'var(--text2)'};font-size:0.8rem;margin-left:6px">[${actionText[d.action] || d.action}]</span>
+        </div>
+        ${d.detail ? `<div class="detail">${d.detail}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
 
-  // Bar
-  barWrap.innerHTML = '<canvas id="feeBar"></canvas>';
-  new Chart(document.getElementById('feeBar'), {
-    type:'bar',
-    data:{
-      labels:['佣金','印花税','过户费','滑点'],
-      datasets:[{ data:[s.total_commission, s.total_stamp_duty, s.total_transfer_fee, s.total_slippage],
-        backgroundColor:['#4f8cff','#ef4444','#f59e0b','#a855f7'], borderRadius:6 }]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: ctx => fmtMoney(ctx.parsed.y) } } },
-      scales:{
-        x:{ ticks:{ color:'#8b8fa3' }, grid:{ display:false } },
-        y:{ ticks:{ color:'#8b8fa3', callback: v => '¥'+v }, grid:{ color:'rgba(255,255,255,.05)' } }
-      }
-    }
-  });
-
-  // Pie
-  pieWrap.innerHTML = '<canvas id="feePie"></canvas>';
-  new Chart(document.getElementById('feePie'), {
-    type:'doughnut',
-    data:{
-      labels:['佣金','印花税','过户费','滑点'],
-      datasets:[{ data:[s.total_commission, s.total_stamp_duty, s.total_transfer_fee, s.total_slippage],
-        backgroundColor:['#4f8cff','#ef4444','#f59e0b','#a855f7'], borderWidth:0 }]
-    },
-    options:{
-      responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ position:'right', labels:{ color:'#8b8fa3', font:{size:11} } },
-        tooltip:{ callbacks:{ label: ctx => ctx.label + ': ' + fmtMoney(ctx.parsed) + ' (' + fmt(ctx.parsed/(s.total_fees)*100,1) + '%)' } }
-      }
-    }
-  });
-})();
+// ===== Init =====
+loadData();
 </script>
 </body>
 </html>
