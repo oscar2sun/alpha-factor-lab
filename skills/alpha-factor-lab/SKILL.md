@@ -1,4 +1,4 @@
-# Alpha Factor Lab — 量化因子研究工作流 v2.1
+# Alpha Factor Lab — 量化因子研究工作流 v2.2
 
 ## 描述
 量化因子研究（Quant Factor Research）完整工作流。从研报/新闻/投资 idea 输入，到因子构建、衰减分析、单因子回测评估的完整链路。模仿专业量化公司 Quant Researcher 的日常研究流程。
@@ -242,12 +242,71 @@ python3 scripts/visualizer.py \
 每次因子回测完成后，**必须**将结果写入前端展示：
 
 1. 读取 `factors.json`
-2. 按现有因子数据结构追加/更新一条记录（按 `id` 匹配）
+2. 按下面的 **标准格式** 追加/更新一条记录（按 `id` 匹配）
 3. 回测产出的 `cumulative_returns.json` 和 `ic_series.json` 放在 `output/{factor_id}/` 目录下
 4. 在因子记录中设置 `nav_data` 和 `ic_data` 路径指向这些文件
 5. 写入后 commit 并 push 到 GitHub
 
 **阿尔法工坊地址：** https://oscar2sun.github.io/alpha-factor-lab/factor-backtest.html
+
+### factors.json 标准字段格式
+
+⚠️ **严格遵循此格式，否则前端无法正常渲染！**
+
+```json
+{
+  "id": "factor_name_v1",
+  "name": "因子中文名",
+  "name_en": "Factor English Name",
+  "formula": "简短公式描述",
+  "description": "因子详细描述（1-2句话）",
+  "category": "流动性|风险|动量|价值|基本面|技术",
+  "stock_pool": "中证1000",
+  "period": "2022-10 ~ 2026-02",
+  "rebalance_freq": 20,
+  "forward_days": 20,
+  "cost": 0.002,
+  "direction": "positive|negative",
+  "expected_direction": "正向|负向",
+  "factor_type": "量价|基本面",
+  "hypothesis": "因子逻辑假设（1句话）",
+  "rating": "★★★★ 强|★★★ 可用|★★☆ 弱|☆☆☆ 失效",
+  "conclusion": "回测结论（2-3句话，包含关键指标和最终判断）",
+  "lessons_learned": ["教训1", "教训2", "教训3"],
+  "upgrade_notes": "升级说明（如有）",
+  "nav_data": "output/factor_name_v1/cumulative_returns.json",
+  "ic_data": "output/factor_name_v1/ic_series.json",
+  "created": "2026-02-24",
+  "updated": "2026-02-24",
+  "metrics": {
+    "ic_mean": 0.028,
+    "ic_std": 0.113,
+    "ic_t": 2.76,
+    "ic_positive_ratio": 0.60,
+    "ic_significant": true,
+    "rank_ic": 0.048,
+    "ir": 0.244,
+    "long_short_total": 0.608,
+    "long_short_annual": 0.160,
+    "long_short_annual_return": 0.160,
+    "long_short_sharpe": 1.14,
+    "long_short_mdd": -0.186,
+    "turnover": 0.245,
+    "monotonicity": 1.0,
+    "group_returns_annualized": [0.018, 0.063, 0.096, 0.136, 0.214],
+    "group_sharpe": [0.06, 0.24, 0.40, 0.58, 0.94],
+    "group_mdd": [-0.49, -0.42, -0.35, -0.36, -0.32]
+  }
+}
+```
+
+**关键注意事项：**
+- `metrics` 必须是嵌套对象，指标不能平铺在顶层
+- `group_returns_annualized`、`group_sharpe`、`group_mdd` 必须是**数组**（[G1, G2, ..., G5]），不能是对象 `{G1: v}`
+- `lessons_learned` 必须是**字符串数组**，不能是单个字符串
+- `conclusion` 是必填字段，前端详情页底部显示
+- 收益/回撤等指标用**小数**（0.16 而非 16%），前端会自动格式化
+- `long_short_annual_return` 和 `long_short_annual` 保持相同值（兼容性）
 
 ## 目录结构
 ```
@@ -267,6 +326,12 @@ alpha-factor-lab/
 ```
 
 ## 更新日志
+
+### v2.2 (2026-02-24)
+- **SKILL.md:**
+  - 新增 factors.json 标准字段格式规范（完整模板 + 注意事项）
+  - 明确 metrics 嵌套结构、数组类型、必填字段要求
+  - 避免新因子写入时格式不一致导致前端渲染失败
 
 ### v2.1 (2026-02-16)
 - **factor_backtest.py:**
