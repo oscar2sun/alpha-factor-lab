@@ -1,10 +1,10 @@
 {
   "last_run": {
-    "quant_factor_scan": null,
+    "quant_factor_scan": "2026-02-24",
     "quant_rebalance": null,
-    "trader_morning": null,
-    "trader_afternoon": null,
-    "value_news_scan": null,
+    "trader_morning": "2026-02-24",
+    "trader_afternoon": "2026-02-24",
+    "value_news_scan": "2026-02-24",
     "value_deep_analysis": null,
     "nav_update": null,
     "frontend_deploy": null
@@ -12,5 +12,5 @@
   "pending": [],
   "status": "ok",
   "created_at": "2026-02-23T22:14:29.848164",
-  "updated_at": "2026-02-23T22:14:29.848173"
+  "updated_at": "2026-02-24T13:41:38.242245"
 }
