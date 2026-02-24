@@ -212,5 +212,59 @@
         -0.46085385751313
       ]
     }
+  },
+  {
+    "id": "pb_roe_residual_v1",
+    "name": "PB-ROE估值偏离度",
+    "formula": "截面回归 ln(PB) ~ ROE 残差 + 市值中性化",
+    "description": "每个截面对ln(PB)和ROE做OLS回归，残差为正=高估，残差为负=低估。做多低残差（便宜股），做空高残差（贵股）。经市值中性化处理。",
+    "category": "fundamental",
+    "stock_pool": "中证1000",
+    "stock_count": 999,
+    "date_range": "2022-10-10 ~ 2026-02-13",
+    "trading_days": 817,
+    "rebalance_freq": 20,
+    "cost_per_trade": 0.002,
+    "ic_mean": -0.004,
+    "ic_std": 0.1424,
+    "ic_t": -0.22,
+    "ic_significant": false,
+    "rank_ic": -0.0237,
+    "ir": -0.0278,
+    "long_short_return": 4.46,
+    "long_short_annual": 1.36,
+    "long_short_sharpe": 0.08,
+    "long_short_mdd": -32.24,
+    "turnover": 26.18,
+    "monotonicity": 0.3,
+    "direction": "negative",
+    "rating": 1,
+    "rating_label": "☆☆☆ 失效",
+    "verdict": "IC不显著(t=0.22)，单调性差(0.3)，Sharpe=0.08。基本面因子在中证1000小盘股噪声太大，完全失效。",
+    "nav_data": "output/pb_roe_residual_v1/cumulative_returns.json",
+    "ic_data": "output/pb_roe_residual_v1/ic_series.json",
+    "group_returns_annualized": {
+      "G1": 15.85,
+      "G2": 23.26,
+      "G3": 20.34,
+      "G4": 25.05,
+      "G5": 16.76
+    },
+    "group_sharpe": {
+      "G1": 0.75,
+      "G2": 0.96,
+      "G3": 0.79,
+      "G4": 0.92,
+      "G5": 0.59
+    },
+    "group_mdd": {
+      "G1": -27.92,
+      "G2": -31.81,
+      "G3": -36.82,
+      "G4": -36.82,
+      "G5": -41.7
+    },
+    "created": "2026-02-24",
+    "updated": "2026-02-24"
   }
 ]
