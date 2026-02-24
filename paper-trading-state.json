@@ -6,11 +6,11 @@
     "trader_afternoon": "2026-02-24",
     "value_news_scan": "2026-02-24",
     "value_deep_analysis": null,
-    "nav_update": null,
+    "nav_update": "2026-02-24",
     "frontend_deploy": null
   },
   "pending": [],
   "status": "ok",
   "created_at": "2026-02-23T22:14:29.848164",
-  "updated_at": "2026-02-24T15:31:46.187274"
+  "updated_at": "2026-02-24T15:47:41.846927"
 }

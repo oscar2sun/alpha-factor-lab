@@ -6,7 +6,7 @@
     "benchmark": "000300",
     "benchmark_name": "沪深300",
     "created_at": "2026-02-23 22:14:25",
-    "updated_at": "2026-02-24 13:41:33",
+    "updated_at": "2026-02-24 15:32:18",
     "status": "active"
   },
   "players": {
@@ -22,9 +22,15 @@
         "last_update": "2026-02-24"
       },
       "nav_history": {
-        "dates": [],
-        "nav": [],
-        "cash_pct": []
+        "dates": [
+          "2026-02-24"
+        ],
+        "nav": [
+          1.0
+        ],
+        "cash_pct": [
+          100.0
+        ]
       },
       "trades": [],
       "decisions": [
@@ -57,7 +63,7 @@
       "stats": {
         "total_return_pct": 0.0,
         "annualized_return_pct": 0.0,
-        "max_drawdown_pct": 0.0,
+        "max_drawdown_pct": 0,
         "sharpe_ratio": 0.0,
         "calmar_ratio": 0.0,
         "win_rate": 0.0,
@@ -82,9 +88,15 @@
         "last_update": "2026-02-24"
       },
       "nav_history": {
-        "dates": [],
-        "nav": [],
-        "cash_pct": []
+        "dates": [
+          "2026-02-24"
+        ],
+        "nav": [
+          1.0
+        ],
+        "cash_pct": [
+          100.0
+        ]
       },
       "trades": [],
       "decisions": [
@@ -109,7 +121,7 @@
       "stats": {
         "total_return_pct": 0.0,
         "annualized_return_pct": 0.0,
-        "max_drawdown_pct": 0.0,
+        "max_drawdown_pct": 0,
         "sharpe_ratio": 0.0,
         "calmar_ratio": 0.0,
         "win_rate": 0.0,
@@ -134,9 +146,15 @@
         "last_update": "2026-02-24"
       },
       "nav_history": {
-        "dates": [],
-        "nav": [],
-        "cash_pct": []
+        "dates": [
+          "2026-02-24"
+        ],
+        "nav": [
+          1.0
+        ],
+        "cash_pct": [
+          100.0
+        ]
       },
       "trades": [],
       "decisions": [
@@ -177,7 +195,7 @@
       "stats": {
         "total_return_pct": 0.0,
         "annualized_return_pct": 0.0,
-        "max_drawdown_pct": 0.0,
+        "max_drawdown_pct": 0,
         "sharpe_ratio": 0.0,
         "calmar_ratio": 0.0,
         "win_rate": 0.0,
@@ -192,11 +210,49 @@
     }
   },
   "benchmark": {
-    "dates": [],
-    "nav": []
+    "dates": [
+      "2026-02-24"
+    ],
+    "nav": [
+      1.010113
+    ]
   },
   "leaderboard": {
-    "rankings": [],
-    "updated_at": null
+    "rankings": [
+      {
+        "player_id": "quant",
+        "name": "因子猎人",
+        "emoji": "🔢",
+        "total_return_pct": 0.0,
+        "sharpe_ratio": 0.0,
+        "max_drawdown_pct": 0,
+        "current_nav": 1.0,
+        "total_trades": 0,
+        "rank": 1
+      },
+      {
+        "player_id": "trader",
+        "name": "技术猎手",
+        "emoji": "📊",
+        "total_return_pct": 0.0,
+        "sharpe_ratio": 0.0,
+        "max_drawdown_pct": 0,
+        "current_nav": 1.0,
+        "total_trades": 0,
+        "rank": 2
+      },
+      {
+        "player_id": "value",
+        "name": "巴菲特门徒",
+        "emoji": "🏛️",
+        "total_return_pct": 0.0,
+        "sharpe_ratio": 0.0,
+        "max_drawdown_pct": 0,
+        "current_nav": 1.0,
+        "total_trades": 0,
+        "rank": 3
+      }
+    ],
+    "updated_at": "2026-02-24 15:32:18"
   }
 }
