@@ -121,7 +121,16 @@ python3 skills/paper-trading/scripts/task_state.py should-run --task quant_rebal
 
 前端 `paper-trading.html` 读取 `paper-trading-data.json`（加cache-bust `?v=timestamp`）。
 
-每次数据更新后 git push → GitHub Pages 自动部署。
+⚠️ **每次写入 decision / trade / nav 后必须立刻 git push！** 不要等frontend-deploy cron。
+
+```bash
+cd alpha-factor-lab
+git add paper-trading-data.json
+git commit -m "data: 竞赛数据更新 <简短描述>"
+git push
+```
+
+GitHub Pages 一般1~2分钟内自动部署。不需要额外的deploy步骤。
 
 ## 费率设置
 - 佣金：万三（双向），最低¥5
